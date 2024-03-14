@@ -2,6 +2,7 @@ package org.example.cookercorner.config;
 
 
 import org.example.cookercorner.util.CustomUserDetails;
+import org.example.cookercorner.util.JwtAuthFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -50,7 +51,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration configuration = new CorsConfiguration();
-                    configuration.addAllowedOrigin("https://vercel.com/umars-projects-fa2018ce/neobis-front-auth");
+                    configuration.addAllowedOrigin("https://vercel.com/");
                     configuration.addAllowedOrigin("http://localhost:3007");
                     configuration.addAllowedHeader("*");
                     configuration.addAllowedMethod("*");
