@@ -1,14 +1,14 @@
 package org.example.cookercorner.controller;
 
 
-import com.neobis.neoauth.dtos.*;
-import com.neobis.neoauth.service.UserService;
+
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.cookercorner.dtos.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -108,32 +108,32 @@ public class AuthController {
 
 
 
-    @Operation(
-            summary = "Users can reset their password using this link. It sends link to the email",
-            description = "User can get another link to confirm their email"
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Link has been sent to the email"),
-            @ApiResponse(responseCode = "403", description = "User not found"),
-
-    })
-    @PutMapping("/forgot-password")
-    public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordDto dto){
-        return userService.forgotPassword(dto);
-    }
-
-    @Operation(
-            summary = "Reset password",
-            description = "Resetting the password with the provided new password"
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Password has been changed successfully"),
-            @ApiResponse(responseCode = "403", description = "Invalid token"),
-
-    })
-    @PutMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(@RequestParam ("resetToken") String resetToken, @RequestBody ResetPasswordDto resetPasswordDto){
-        return userService.resetPassword(resetToken, resetPasswordDto);
-    }
+//    @Operation(
+//            summary = "Users can reset their password using this link. It sends link to the email",
+//            description = "User can get another link to confirm their email"
+//    )
+//    @ApiResponses({
+//            @ApiResponse(responseCode = "200", description = "Link has been sent to the email"),
+//            @ApiResponse(responseCode = "403", description = "User not found"),
+//
+//    })
+//    @PutMapping("/forgot-password")
+//    public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordDto dto){
+//        return userService.forgotPassword(dto);
+//    }
+//
+//    @Operation(
+//            summary = "Reset password",
+//            description = "Resetting the password with the provided new password"
+//    )
+//    @ApiResponses({
+//            @ApiResponse(responseCode = "200", description = "Password has been changed successfully"),
+//            @ApiResponse(responseCode = "403", description = "Invalid token"),
+//
+//    })
+//    @PutMapping("/reset-password")
+//    public ResponseEntity<String> resetPassword(@RequestParam ("resetToken") String resetToken, @RequestBody ResetPasswordDto resetPasswordDto){
+//        return userService.resetPassword(resetToken, resetPasswordDto);
+//    }
 
 }
