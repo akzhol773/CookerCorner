@@ -105,12 +105,11 @@ public class AuthController {
             @ApiResponse(responseCode = "403", description = "Token not found")
 
     })
+    @Hidden
     @PostMapping("/re-confirm-email")
     public ResponseEntity<String> reconfirm(@RequestBody ReconfirmEmailDto dto) {
         return  userService.resendConfirmation(dto);
 
     }
-
-
 
 }
