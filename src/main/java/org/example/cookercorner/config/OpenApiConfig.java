@@ -15,14 +15,14 @@ import io.swagger.v3.oas.annotations.servers.Server;
                         email = "akzholbek0096@gmail.com",
                         url = "https://t.me/akzholbek"
                 ),
-                title = "Lorby online tutoring web app",
-                description = "OpenApi documentation for Lorby Spring Project",
+                title = "Cooker corner web app",
+                description = "OpenApi documentation for Cooker Corner Spring  Web Project",
                 version = "0.0.1"
         ),
         servers = {
                 @Server(
                         description = "Local environment",
-                        url = "https://royal-nerve-lorby.up.railway.app"
+                        url = "https://localhost:3007"
                 )
         }
 )
