@@ -1,9 +1,10 @@
 package org.example.cookercorner.service.Impl;
 
-import com.neobis.neoauth.entities.Role;
-import com.neobis.neoauth.repository.RoleRepository;
-import com.neobis.neoauth.service.RoleService;
+
 import lombok.RequiredArgsConstructor;
+import org.example.cookercorner.entities.Role;
+import org.example.cookercorner.repository.RoleRepository;
+import org.example.cookercorner.service.RoleService;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

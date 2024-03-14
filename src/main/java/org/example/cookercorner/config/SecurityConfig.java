@@ -51,7 +51,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration configuration = new CorsConfiguration();
-                    configuration.addAllowedOrigin("https://vercel.com/");
+                    configuration.addAllowedOrigin("https://vercel.com");
                     configuration.addAllowedOrigin("http://localhost:3007");
                     configuration.addAllowedHeader("*");
                     configuration.addAllowedMethod("*");

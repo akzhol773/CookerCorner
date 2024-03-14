@@ -28,7 +28,7 @@ public class EmailServiceImpl implements EmailService {
             helper.setText(body, true);
             helper.setTo(to);
             helper.setSubject("Confirm your email");
-            helper.setFrom("lorby@edu.com");
+            helper.setFrom("cookerscorner0gmail.com");
             mailSender.send(mimeMessage);
         } catch (MessagingException e) {
             throw new IllegalStateException("Failed to send email");

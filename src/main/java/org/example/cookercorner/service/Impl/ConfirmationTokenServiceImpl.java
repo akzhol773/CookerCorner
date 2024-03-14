@@ -1,9 +1,10 @@
 package org.example.cookercorner.service.Impl;
 
-import com.neobis.neoauth.entities.ConfirmationToken;
-import com.neobis.neoauth.repository.ConfirmationTokenRepository;
-import com.neobis.neoauth.service.ConfirmationTokenService;
+
 import lombok.RequiredArgsConstructor;
+import org.example.cookercorner.entities.ConfirmationToken;
+import org.example.cookercorner.repository.ConfirmationTokenRepository;
+import org.example.cookercorner.service.ConfirmationTokenService;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
