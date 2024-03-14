@@ -1,7 +1,7 @@
 package org.example.cookercorner.config;
 
-import com.neobis.neoauth.util.CustomUserDetails;
-import com.neobis.neoauth.util.JwtAuthFilter;
+
+import org.example.cookercorner.util.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
