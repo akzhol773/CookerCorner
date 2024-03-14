@@ -1,9 +1,8 @@
 package org.example.cookercorner.service;
 
-import com.neobis.neoauth.dtos.*;
-import com.neobis.neoauth.entities.ConfirmationToken;
-import com.neobis.neoauth.entities.PasswordResetToken;
-import com.neobis.neoauth.entities.User;
+import org.example.cookercorner.dtos.*;
+import org.example.cookercorner.entities.ConfirmationToken;
+import org.example.cookercorner.entities.User;
 import org.springframework.http.ResponseEntity;
 
 
@@ -21,8 +20,4 @@ public interface UserService {
 
     ResponseEntity<String> resendConfirmation(ReconfirmEmailDto dto);
 
-    ResponseEntity<String> forgotPassword(ForgotPasswordDto dto);
-
-    ResponseEntity<String> resetPassword(String resetToken, ResetPasswordDto dto);
-    public PasswordResetToken generateResetToken(User user);
 }

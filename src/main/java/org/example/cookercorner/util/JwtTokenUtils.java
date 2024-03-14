@@ -68,7 +68,7 @@ public class JwtTokenUtils {
                 .getPayload()
                 .getSubject();
     }
-    public String getUsernameFromRefreshToken(String refreshToken) {
+    public String getEmailFromRefreshToken(String refreshToken) {
         return Jwts.parser()
                 .verifyWith(getRefreshKey())
                 .build()

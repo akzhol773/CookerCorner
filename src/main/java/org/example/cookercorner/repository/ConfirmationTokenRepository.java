@@ -1,16 +1,18 @@
 package org.example.cookercorner.repository;
 
+
+import org.example.cookercorner.entities.ConfirmationToken;
 import org.example.cookercorner.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByEmail(String email);
-    @Query("Select u From User u Where u.isEnabled = false")
-    List<User> findNotEnabledUsers();
+public interface ConfirmationTokenRepository extends JpaRepository<ConfirmationToken, Long> {
+
+    Optional<ConfirmationToken> findByToken(String token);
+
+    List<ConfirmationToken> findByUser(User user);
 }

@@ -9,17 +9,22 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.cookercorner.dtos.*;
+import org.example.cookercorner.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("api/auth/")
 public class AuthController {
 
     private final UserService userService;
+    @Autowired
+    public AuthController(UserService userService) {
+        this.userService = userService;
+    }
 
 
     @Operation(
