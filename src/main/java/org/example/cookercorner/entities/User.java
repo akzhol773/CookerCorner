@@ -32,10 +32,7 @@ public class User implements UserDetails{
     @Column(nullable = false, unique = true)
     private String email;
 
-    @NotBlank(message = "Username field should not be blank")
-    @Column(nullable = false, unique = true)
     private String username;
-
 
     @Column(nullable = false)
     private String password;
