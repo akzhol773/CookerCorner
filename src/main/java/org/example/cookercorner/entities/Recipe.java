@@ -4,6 +4,8 @@ package org.example.cookercorner.entities;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.example.cookercorner.enums.Category;
+import org.example.cookercorner.enums.Difficulty;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -21,13 +23,15 @@ public class Recipe {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String recipeName;
 
     private String description;
 
-    private String category;
+    @Enumerated(EnumType.STRING)
+    private Category category;
 
-    private String difficulty;
+    @Enumerated(EnumType.STRING)
+    private Difficulty difficulty;
 
     private long cookingTime;
 
