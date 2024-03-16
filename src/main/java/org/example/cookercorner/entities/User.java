@@ -39,6 +39,30 @@ public class User implements UserDetails{
 
     private boolean isEnabled;
 
+    private String biography;
+
+    @ManyToOne
+    @JoinColumn(name = "image_id")
+    private Image photo;
+
+
+    @ManyToMany
+    @JoinTable(
+            name = "following",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "following_id")}
+    )
+    private List<User> followings = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "follower",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "following_id")}
+    )
+    private List<User> followers = new ArrayList<>();
+
+
     @CreationTimestamp
     private Date createdDate;
 
