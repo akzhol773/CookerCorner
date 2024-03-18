@@ -1,19 +1,26 @@
 package org.example.cookercorner.dtos;
 
+import lombok.Builder;
+import org.example.cookercorner.entities.Ingredient;
+
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * DTO for {@link org.example.cookercorner.entities.Recipe}
  */
+@Builder
 public record RecipeDto(
-                        Long id,
-                        String recipeName,
-                        String imageUrl,
-                        String author,
-                        int likeQuantity,
-                        int saveQuantity,
-                        boolean isLiked,
-                        boolean isSaved
+        String recipeName,
+        String imageUrl,
+        String author,
+        int cookingTime,
+        String difficulty,
+        int likeQuantity,
+        boolean isLiked,
+        boolean isSaved,
+        String description,
+        List<Ingredient> ingredients
 
 
 ) implements Serializable {

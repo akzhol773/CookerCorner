@@ -13,9 +13,7 @@ public class Ingredient {
 
     private String name;
 
-    private double amount;
-
-    private String measurement;
+    private String amount;
 
     @ManyToOne
     @JoinColumn(name = "recipe_id")

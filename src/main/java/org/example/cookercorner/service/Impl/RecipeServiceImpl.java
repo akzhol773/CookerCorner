@@ -1,5 +1,6 @@
 package org.example.cookercorner.service.Impl;
 
+import org.example.cookercorner.dtos.RecipeDto;
 import org.example.cookercorner.dtos.RecipeListDto;
 import org.example.cookercorner.dtos.RecipeRequestDto;
 import org.example.cookercorner.entities.Ingredient;
@@ -77,7 +78,6 @@ public class RecipeServiceImpl implements RecipeService {
                     (int) recipe.getSaves().stream().count(),
                     isLiked(recipe.getId(), user.getId()),
                     isSaved(recipe.getId(), user.getId())
-
                     );
             recipesDto.add(dto);
         }
@@ -87,7 +87,24 @@ public class RecipeServiceImpl implements RecipeService {
             return ResponseEntity.ok(recipes);
         }
 
+    }
 
+    @Override
+    public RecipeDto getRecipeById(Long recipeId, Long userId) {
+        Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(()-> new RecipeNotFoundException("Recipe not found"));
+        List<Ingredient> ingredients = recipe.getIngredients();
+        return new RecipeDto(
+                recipe.getRecipeName(),
+                recipe.getImage().getUrl(),
+                recipe.getCreatedBy().getUsername(),
+                recipe.getCookingTime(),
+                recipe.getDifficulty().name(),
+                (int) recipe.getLikes().stream().count(),
+                isLiked(recipeId, userId),
+                isSaved(recipeId, userId),
+                recipe.getDescription(),
+                ingredients
+        );
     }
 
 

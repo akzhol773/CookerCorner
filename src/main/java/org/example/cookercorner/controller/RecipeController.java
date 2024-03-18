@@ -1,6 +1,7 @@
 package org.example.cookercorner.controller;
 
 
+import org.example.cookercorner.dtos.RecipeDto;
 import org.example.cookercorner.dtos.RecipeListDto;
 import org.example.cookercorner.dtos.RecipeRequestDto;
 import org.example.cookercorner.service.RecipeService;
@@ -42,14 +43,14 @@ public class RecipeController {
 
 
     @GetMapping("/{recipeId}")
-    public ResponseEntity<Recipe> getRecipeById(Authentication authentication, @PathVariable Long recipeId) {
-        Long userIdFromAuthToken = null;
-
-        if (authentication != null) {
-            userIdFromAuthToken = getUserIdFromAuthToken(authentication);
+    public ResponseEntity<?> getRecipeById(@PathVariable Long recipeId, Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication required");
         }
 
-        return ResponseEntity.ok(recipeService.getRecipeById(recipeId, userIdFromAuthToken));
+        Long userId = tokenUtils.getUserIdFromAuthentication(authentication);
+
+        return ResponseEntity.ok(recipeService.getRecipeById(recipeId, userId));
     }
 
 
