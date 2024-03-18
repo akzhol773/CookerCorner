@@ -16,4 +16,7 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     @Query("SELECT DISTINCT r FROM Recipe r JOIN r.createdBy u WHERE u IN :followings AND r.category = :category")
     List<Recipe> findRecipesFromFollowings(@Param("category") String category, @Param("followings") List<User> followings);
 
+
+    @Query("SELECT r FROM Recipe r WHERE r.createdBy.id = :userId")
+    List<Recipe> findRecipesByUserId(@Param("userId") Long userId);
 }

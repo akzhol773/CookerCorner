@@ -13,4 +13,7 @@ public interface RecipeService {
     ResponseEntity<?> getByCategory(String category, Long userId);
 
     RecipeDto getRecipeById(Long recipeId, Long userId);
+
+
+    ResponseEntity<?> getRecipesByUserId(Long userId, Long currentUserId);
 }

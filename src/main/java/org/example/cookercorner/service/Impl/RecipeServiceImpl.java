@@ -53,7 +53,6 @@ public class RecipeServiceImpl implements RecipeService {
             ingredient1.setRecipe(recipe);
             ingredient1.setName(ingredient.getName());
             ingredient1.setAmount(ingredient.getAmount());
-            ingredient1.setMeasurement(ingredient.getMeasurement());
             ingredients.add(ingredient1);
         }
         recipe.setIngredients(ingredients);
@@ -105,6 +104,32 @@ public class RecipeServiceImpl implements RecipeService {
                 recipe.getDescription(),
                 ingredients
         );
+    }
+
+    @Override
+    public ResponseEntity<?> getRecipesByUserId(Long userId, Long currentUserId) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new UsernameNotFoundException("User not found"));
+        List<Recipe> recipes = recipeRepository.findRecipesByUserId(user.getId());
+        List<RecipeListDto> recipesDto= new ArrayList<>();
+
+        for(Recipe recipe: recipes){
+            RecipeListDto dto = new RecipeListDto(
+                    recipe.getRecipeName(),
+                    recipe.getCreatedBy().getUsername(),
+                    (int) recipe.getLikes().stream().count(),
+                    (int) recipe.getSaves().stream().count(),
+                    isLiked(recipe.getId(), currentUserId),
+                    isSaved(recipe.getId(), currentUserId)
+            );
+            recipesDto.add(dto);
+        }
+        if (recipesDto.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(recipes);
+        }
+
     }
 
 

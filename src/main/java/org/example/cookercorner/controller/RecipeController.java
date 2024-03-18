@@ -1,20 +1,14 @@
 package org.example.cookercorner.controller;
 
 
-import org.example.cookercorner.dtos.RecipeDto;
-import org.example.cookercorner.dtos.RecipeListDto;
 import org.example.cookercorner.dtos.RecipeRequestDto;
 import org.example.cookercorner.service.RecipeService;
 import org.example.cookercorner.util.JwtTokenUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("api/recipes")
@@ -47,11 +41,21 @@ public class RecipeController {
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication required");
         }
-
         Long userId = tokenUtils.getUserIdFromAuthentication(authentication);
-
         return ResponseEntity.ok(recipeService.getRecipeById(recipeId, userId));
     }
+
+    @GetMapping("/get-user-recipe/{userId}")
+    public ResponseEntity<?> getRecipesByUser(@PathVariable Long userId, Authentication authentication){
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication required");
+        }
+        Long currentUserId = tokenUtils.getUserIdFromAuthentication(authentication);
+        return recipeService.getRecipesByUserId(userId, currentUserId);
+    }
+
+
 
 
     @PostMapping("/addRecipe")
@@ -68,5 +72,6 @@ public class RecipeController {
         return ResponseEntity.ok("Recipe has been added successfully");
 
     }
+
 
 }

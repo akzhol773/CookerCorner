@@ -66,11 +66,13 @@ public class JwtTokenUtils {
             if (principal instanceof User) {
                 User user = (User) principal;
                 return user.getId();
+            } else {
+                throw new IllegalArgumentException("Principal is not an instance of User");
             }
-            return null;
         }
         return null;
     }
+
 
 
     public String getUsername(String token) {
