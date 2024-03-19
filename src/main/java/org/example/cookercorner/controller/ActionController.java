@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("api/action")
+@RequestMapping("api/actions")
 public class ActionController {
     private final JwtTokenUtils tokenUtils;
     private final ActionService actionService;
@@ -57,10 +57,11 @@ public class ActionController {
         if (isSaved) {
             actionService.removeMarkFromRecipe(recipeId, userId);
             return ResponseEntity.ok("Mark removed successfully");
-        } else {
+        } else{
             actionService.putMarkIntoRecipe(recipeId, userId);
             return ResponseEntity.ok("Mark added successfully");
         }
+
     }
 
     @PutMapping("/follow/{userId}")
@@ -74,10 +75,11 @@ public class ActionController {
         if (isFollowed) {
             actionService.unfollowUser(userId, currentUserId);
             return ResponseEntity.ok("Unfollowed successfully");
-        } else {
+        } else if(!isFollowed){
             actionService.followUser(userId, currentUserId);
             return ResponseEntity.ok("Followed successfully");
         }
+        return ResponseEntity.ok().body("User cannot follow or unfollow himself or herself");
     }
 
 }

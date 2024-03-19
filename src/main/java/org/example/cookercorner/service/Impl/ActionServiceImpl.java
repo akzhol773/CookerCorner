@@ -52,6 +52,7 @@ public class ActionServiceImpl implements ActionService {
     public void putMarkIntoRecipe(Long recipeId, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(()-> new UsernameNotFoundException("User not found"));
         Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(()-> new RecipeNotFoundException("Recipe not found"));
+
         recipe.getSaves().add(user);
         recipeRepository.save(recipe);
 
@@ -60,17 +61,20 @@ public class ActionServiceImpl implements ActionService {
     @Override
     public void unfollowUser(Long userId, Long currentUserId) {
         User user = userRepository.findById(userId).orElseThrow(()-> new UsernameNotFoundException("User not found"));
-        User currentUser = userRepository.findById(userId).orElseThrow(()-> new UsernameNotFoundException("User not found"));
-        currentUser.getFollowings().remove(user);
-        userRepository.save(currentUser);
-
+        User currentUser = userRepository.findById(currentUserId).orElseThrow(()-> new UsernameNotFoundException("User not found"));
+        if(user != currentUser) {
+            currentUser.getFollowings().remove(user);
+            userRepository.save(currentUser);
+        }
     }
 
     @Override
     public void followUser(Long userId, Long currentUserId) {
-        User user = userRepository.findById(userId).orElseThrow(()-> new UsernameNotFoundException("User not found"));
-        User currentUser = userRepository.findById(userId).orElseThrow(()-> new UsernameNotFoundException("User not found"));
-        currentUser.getFollowings().add(user);
-        userRepository.save(currentUser);
+        User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        User currentUser = userRepository.findById(currentUserId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        if (user != currentUser) {
+            currentUser.getFollowings().add(user);
+            userRepository.save(currentUser);
+        }
     }
 }

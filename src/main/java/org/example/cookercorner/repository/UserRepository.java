@@ -14,5 +14,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("Select u From User u Where u.isEnabled = false")
     List<User> findNotEnabledUsers();
 
-
 }

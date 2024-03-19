@@ -58,7 +58,7 @@ public class User implements UserDetails{
     @JoinTable(
             name = "follower",
             joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "following_id")}
+            inverseJoinColumns = {@JoinColumn(name = "follower_id")}
     )
     private List<User> followers = new ArrayList<>();
 

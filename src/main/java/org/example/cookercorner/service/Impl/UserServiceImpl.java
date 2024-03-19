@@ -204,6 +204,7 @@ public class UserServiceImpl implements UserService {
     }
 
 
+
     @Scheduled(cron = "0 0 12 * * MON")
     private void sendWeeklyConfirmEmail() {
         List<User> users = userRepository.findNotEnabledUsers();

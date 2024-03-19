@@ -22,6 +22,7 @@ public class RecipeController {
         this.tokenUtils = tokenUtils;
     }
 
+
     @GetMapping("/get-by-category")
     public ResponseEntity<?> getRecipes(@RequestParam(value = "category") String category,
                                         Authentication authentication) {
@@ -29,16 +30,12 @@ public class RecipeController {
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication required");
         }
-
         Long userId = tokenUtils.getUserIdFromAuthentication(authentication);
-
         String upperCaseCategory = category.toUpperCase();
-
         try {
             Category categoryEnum = Category.valueOf(upperCaseCategory);
             return recipeService.getByCategory(categoryEnum, userId);
         } catch (IllegalArgumentException e) {
-            // Handle invalid category (e.g., return BAD_REQUEST with error message)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid category provided");
         }
     }
@@ -53,6 +50,7 @@ public class RecipeController {
         return ResponseEntity.ok(recipeService.getRecipeById(recipeId, userId));
     }
 
+
     @GetMapping("/get-user-recipe/{userId}")
     public ResponseEntity<?> getRecipesByUser(@PathVariable Long userId, Authentication authentication){
 
@@ -64,25 +62,16 @@ public class RecipeController {
     }
 
 
-
     @PostMapping("/addRecipe")
     public ResponseEntity<String> addRecipe(@RequestPart("recipeDto") RecipeRequestDto requestDto, @RequestPart ("photo") MultipartFile image, Authentication authentication){
-
-
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication required");
         }
-
         Long userId = tokenUtils.getUserIdFromAuthentication(authentication);
-
-
         recipeService.addRecipe(requestDto, image, userId);
-
         return ResponseEntity.ok("Recipe has been added successfully");
 
     }
-
-
 
 
 }
