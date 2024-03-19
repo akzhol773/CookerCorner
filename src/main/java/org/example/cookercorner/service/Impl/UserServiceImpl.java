@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@Transactional
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -61,9 +60,8 @@ public class UserServiceImpl implements UserService {
     private final ConfirmationTokenRepository confirmationTokenRepository;
     private static final String CONFIRM_EMAIL_LINK = System.getenv("CONFIRM_EMAIL_LINK");
     private final RecipeRepository recipeRepository;
-
-
     @Override
+    @Transactional
     public ResponseEntity<UserResponseDto> createNewUser(UserRequestDto registrationUserDto) {
 
         if (userRepository.findByEmail(registrationUserDto.email()).isPresent()) {
@@ -83,17 +81,10 @@ public class UserServiceImpl implements UserService {
         }
         user.setPassword(passwordEncoder.encode(registrationUserDto.password()));
         userRepository.save(user);
-
-
-
         ConfirmationToken confirmationToken = generateConfirmToken(user);
-
-
         confirmationTokenService.saveConfirmationToken(confirmationToken);
-
         String link = CONFIRM_EMAIL_LINK + confirmationToken.getToken();
         emailService.sendConfirmationMail(link, user);
-
         return ResponseEntity.ok(new UserResponseDto("Success! Please, check your email for the confirmation", user.getUsername()));
     }
 
@@ -108,8 +99,6 @@ public class UserServiceImpl implements UserService {
             String accessToken = jwtTokenUtils.generateAccessToken(user);
             String refreshToken = jwtTokenUtils.generateRefreshToken(user);
             return ResponseEntity.ok(new JwtResponseDto(accessToken, refreshToken));
-
-
         } catch (AuthenticationException exception) {
             if (exception instanceof BadCredentialsException) {
                 throw new BadCredentialsException("Invalid email or password");
@@ -122,7 +111,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<JwtRefreshTokenDto> refreshToken(String refreshToken) {
-
         try {
             if (refreshToken == null) {
                 return ResponseEntity.badRequest().build();
@@ -134,8 +122,6 @@ public class UserServiceImpl implements UserService {
             }
             User user = userRepository.findByEmail(usernameFromRefreshToken).orElseThrow(() ->
                     new UsernameNotFoundException("User not found"));
-
-
             String accessToken = jwtTokenUtils.generateAccessToken(user);
             return ResponseEntity.ok(new JwtRefreshTokenDto(usernameFromRefreshToken, accessToken));
 
@@ -237,6 +223,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void changeProfile(UserUpdateProfileDto dto, MultipartFile photo, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));

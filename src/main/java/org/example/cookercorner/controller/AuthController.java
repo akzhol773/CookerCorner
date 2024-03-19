@@ -6,6 +6,9 @@ import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.cookercorner.dtos.*;
@@ -70,7 +73,7 @@ public class AuthController {
 
     })
 
-    @PostMapping("/refresh-token")
+    @PostMapping("/refresh_token")
     public ResponseEntity<JwtRefreshTokenDto> refreshToken(@RequestParam("refreshToken") String refreshToken){
          return  userService.refreshToken(refreshToken);
 
@@ -88,7 +91,7 @@ public class AuthController {
 
     })
     @Hidden
-    @GetMapping("/confirm-email")
+    @GetMapping("/confirm_email")
     public ResponseEntity<String> confirm(@RequestParam("token") String token){
         return userService.confirmEmail(token);
     }
@@ -105,9 +108,18 @@ public class AuthController {
 
     })
     @Hidden
-    @PostMapping("/re-confirm-email")
+    @PostMapping("/re_confirm_email")
     public ResponseEntity<String> reconfirm(@RequestBody ReconfirmEmailDto dto) {
         return  userService.resendConfirmation(dto);
+    }
+
+    @GetMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("Logged out successfully");
     }
 
 }

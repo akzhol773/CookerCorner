@@ -28,4 +28,5 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     @Query("SELECT r FROM Recipe r JOIN r.saves s WHERE s.id = :userId")
     List<Recipe> findFlaggedRecipes(@Param("userId") Long userId);
 
+
 }

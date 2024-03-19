@@ -32,7 +32,7 @@ public class UserController {
     }
 
 
-    @GetMapping("/get-user-profile/{userId}")
+    @GetMapping("/get_user_profile/{userId}")
     public ResponseEntity<UserProfileDto> getRecipesByUser(@PathVariable Long userId, Authentication authentication){
 
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -47,7 +47,7 @@ public class UserController {
         return ResponseEntity.ok(userService.searchUser(query));
     }
 
-    @PutMapping("/update-profile")
+    @PutMapping("/update_profile")
     public ResponseEntity<String> changeProfile(@RequestPart("dto") UserUpdateProfileDto dto, @RequestPart("image" ) MultipartFile photo, Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");

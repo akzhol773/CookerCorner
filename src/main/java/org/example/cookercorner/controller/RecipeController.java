@@ -28,7 +28,7 @@ public class RecipeController {
         this.tokenUtils = tokenUtils;
     }
 
-    @GetMapping("/get-by-category")
+    @GetMapping("/get_by_category")
     public ResponseEntity<List<RecipeListDto>> getRecipes(@RequestParam(value = "category") String category,
                                         Authentication authentication) {
 
@@ -45,7 +45,7 @@ public class RecipeController {
         }
     }
 
-    @GetMapping("/my-recipes")
+    @GetMapping("/my_recipes")
     public ResponseEntity<List<RecipeListDto>> getMyRecipes(Authentication authentication) {
 
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -56,7 +56,7 @@ public class RecipeController {
         return recipeService.getMyRecipe(userId);
     }
 
-    @GetMapping("/my-flagged-recipes")
+    @GetMapping("/my_flagged_recipes")
     public ResponseEntity<List<RecipeListDto>> getMyFlaggedRecipes(Authentication authentication) {
 
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -66,7 +66,7 @@ public class RecipeController {
         return recipeService.getMyFlaggedRecipe(userId);
     }
 
-    @GetMapping("/get-by-userId/{userId}")
+    @GetMapping("/get_by_userId/{userId}")
     public ResponseEntity<List<RecipeListDto>> getRecipesByUserId(Authentication authentication,  @PathVariable(name = "userId") Long userId) {
 
         if (authentication == null || !authentication.isAuthenticated()) {
