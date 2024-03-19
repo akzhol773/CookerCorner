@@ -21,4 +21,7 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
     @Query("SELECT r FROM Recipe r WHERE r.createdBy.id = :userId")
     List<Recipe> findRecipesByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT c FROM Recipe c WHERE c.recipeName LIKE CONCAT('%', :query, '%')")
+    List<Recipe> searchRecipes(@Param("query") String query);
 }

@@ -165,6 +165,16 @@ public class GlobalExceptionHandler {
         body.put("message", ex.getMessage());
         return ResponseEntity.badRequest().body(body);
     }
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<Object> handleIllegalArgumentException(
+            IllegalArgumentException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("message", ex.getMessage());
+        return ResponseEntity.badRequest().body(body);
+    }
+
 
     @ExceptionHandler(UserRoleNotFoundException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

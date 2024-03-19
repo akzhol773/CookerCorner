@@ -63,7 +63,7 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public ResponseEntity<?> getByCategory(Category category, Long userId) {
+    public ResponseEntity<List<RecipeListDto>> getByCategory(Category category, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new UsernameNotFoundException("User not found"));
         List<User> followings  = user.getFollowings();
@@ -84,7 +84,7 @@ public class RecipeServiceImpl implements RecipeService {
         if (recipesDto.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
-            return ResponseEntity.ok(recipes);
+            return ResponseEntity.ok(recipesDto);
         }
 
     }
@@ -108,7 +108,7 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public ResponseEntity<?> getRecipesByUserId(Long userId, Long currentUserId) {
+    public ResponseEntity<List<RecipeListDto>> getRecipesByUserId(Long userId, Long currentUserId) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new UsernameNotFoundException("User not found"));
         List<Recipe> recipes = recipeRepository.findRecipesByUserId(user.getId());
@@ -145,6 +145,28 @@ public class RecipeServiceImpl implements RecipeService {
         Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(()-> new RecipeNotFoundException("Recipe not found"));
         return recipe != null && recipe.getSaves().stream().anyMatch(user -> user.getId().equals(userId));
     }
+
+    @Override
+    public List<RecipeListDto> searchRecipes(String query, Long currentUserId) {
+        List<Recipe> recipes = recipeRepository.searchRecipes(query);
+        List<RecipeListDto> recipesDto = new ArrayList<>();
+
+        for(Recipe recipe: recipes){
+            RecipeListDto dto = new RecipeListDto(
+                    recipe.getRecipeName(),
+                    recipe.getCreatedBy().getUsername(),
+                    (int) recipe.getLikes().stream().count(),
+                    (int) recipe.getSaves().stream().count(),
+                    isLiked(recipe.getId(), currentUserId),
+                    isSaved(recipe.getId(), currentUserId)
+            );
+            recipesDto.add(dto);
+
+        }
+        return recipesDto;
+
+    }
+
 
 }
 
