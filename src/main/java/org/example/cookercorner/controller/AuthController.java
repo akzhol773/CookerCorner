@@ -73,6 +73,7 @@ public class AuthController {
 
     })
 
+    @Hidden
     @PostMapping("/refresh_token")
     public ResponseEntity<JwtRefreshTokenDto> refreshToken(@RequestParam("refreshToken") String refreshToken){
          return  userService.refreshToken(refreshToken);
@@ -113,6 +114,15 @@ public class AuthController {
         return  userService.resendConfirmation(dto);
     }
 
+
+    @Operation(
+            summary = "Logout",
+            description = "To logout from the system using this endpoint"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Logged out successfully"),
+
+    })
     @GetMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request) {
         HttpSession session = request.getSession(false);

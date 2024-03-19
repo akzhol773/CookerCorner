@@ -1,5 +1,8 @@
 package org.example.cookercorner.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.example.cookercorner.service.ActionService;
 import org.example.cookercorner.service.RecipeService;
 import org.example.cookercorner.service.UserService;
@@ -28,6 +31,12 @@ public class ActionController {
     }
 
     @PutMapping("/like/{recipeId}")
+    @Operation(summary = "Toggle like for a recipe")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Like status liked successfully"),
+            @ApiResponse(responseCode = "200", description = "Like status unliked successfully"),
+            @ApiResponse(responseCode = "401", description = "Authentication required")
+    })
     public ResponseEntity<String> toggleLike(Authentication authentication, @PathVariable(name = "recipeId") Long recipeId) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication required");
@@ -45,6 +54,12 @@ public class ActionController {
     }
 
     @PutMapping("/mark/{recipeId}")
+    @Operation(summary = "Toggle mark for a recipe")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Mark status toggled successfully"),
+            @ApiResponse(responseCode = "200", description = "Mark status toggled back successfully"),
+            @ApiResponse(responseCode = "401", description = "Authentication required")
+    })
     public ResponseEntity<String> toggleMark(Authentication authentication, @PathVariable(name = "recipeId") Long recipeId) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication required");
@@ -63,6 +78,12 @@ public class ActionController {
     }
 
     @PutMapping("/follow/{userId}")
+    @Operation(summary = "Toggle follow for a user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User followed successfully"),
+            @ApiResponse(responseCode = "200", description = "User unfollowed successfully"),
+            @ApiResponse(responseCode = "401", description = "Authentication required")
+    })
     public ResponseEntity<String> toggleFollow(Authentication authentication, @PathVariable(name = "userId") Long userId) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication required");
