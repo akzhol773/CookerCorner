@@ -5,5 +5,5 @@ import java.io.Serializable;
 /**
  * DTO for {@link org.example.cookercorner.entities.User}
  */
-public record UserDto1(String name, String biography) implements Serializable {
+public record UserUpdateProfileDto(String name, String biography) implements Serializable {
 }

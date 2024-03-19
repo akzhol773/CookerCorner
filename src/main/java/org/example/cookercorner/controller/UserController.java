@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.example.cookercorner.dtos.RecipeListDto;
 import org.example.cookercorner.dtos.UserDto;
 import org.example.cookercorner.dtos.UserProfileDto;
+import org.example.cookercorner.dtos.UserUpdateProfileDto;
 import org.example.cookercorner.service.UserService;
 import org.example.cookercorner.util.JwtTokenUtils;
 import org.springframework.data.domain.Page;
@@ -47,8 +48,18 @@ public class UserController {
     }
 
     @PutMapping("/update-profile")
-    public ResponseEntity<String> changeProfile(@RequestPart("dto") String dto) {
-
+    public ResponseEntity<String> changeProfile(@RequestPart("dto") UserUpdateProfileDto dto, @RequestPart("image" ) MultipartFile photo, Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
+        }
+        Long currentUserId = tokenUtils.getUserIdFromAuthentication(authentication);
+        try {
+            userService.changeProfile(dto, photo, currentUserId);
+            return ResponseEntity.ok("Profile updated successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to update profile: " + e.getMessage());
+        }
 
     }
 

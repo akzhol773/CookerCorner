@@ -3,18 +3,12 @@ package org.example.cookercorner.service.Impl;
 
 import jakarta.transaction.Transactional;
 import org.example.cookercorner.dtos.*;
-import org.example.cookercorner.entities.ConfirmationToken;
-import org.example.cookercorner.entities.Recipe;
-import org.example.cookercorner.entities.Role;
-import org.example.cookercorner.entities.User;
+import org.example.cookercorner.entities.*;
 import org.example.cookercorner.exceptions.*;
 import org.example.cookercorner.repository.ConfirmationTokenRepository;
 import org.example.cookercorner.repository.RecipeRepository;
 import org.example.cookercorner.repository.UserRepository;
-import org.example.cookercorner.service.ConfirmationTokenService;
-import org.example.cookercorner.service.EmailService;
-import org.example.cookercorner.service.RoleService;
-import org.example.cookercorner.service.UserService;
+import org.example.cookercorner.service.*;
 import org.example.cookercorner.util.JwtTokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,6 +23,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -41,9 +36,10 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, RoleService roleService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtTokenUtils jwtTokenUtils, ConfirmationTokenService confirmationTokenService, EmailService emailService, ConfirmationTokenRepository confirmationTokenRepository,
+    public UserServiceImpl(UserRepository userRepository, ImageService imageService, RoleService roleService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtTokenUtils jwtTokenUtils, ConfirmationTokenService confirmationTokenService, EmailService emailService, ConfirmationTokenRepository confirmationTokenRepository,
                            RecipeRepository recipeRepository) {
         this.userRepository = userRepository;
+        this.imageService = imageService;
         this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
@@ -55,6 +51,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private final UserRepository userRepository;
+    private final ImageService imageService;
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -237,6 +234,21 @@ public class UserServiceImpl implements UserService {
             userDto.add(dto);
         }
         return userDto;
+    }
+
+    @Override
+    public void changeProfile(UserUpdateProfileDto dto, MultipartFile photo, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        user.setName(dto.name());
+        user.setBiography(dto.biography());
+        if (photo != null && !photo.isEmpty()) {
+            String imageUrl = imageService.saveUserImage(photo).getUrl();
+            Image image = new Image();
+            image.setUrl(imageUrl);
+            user.setPhoto(image);
+        }
+        userRepository.save(user);
     }
 
 
