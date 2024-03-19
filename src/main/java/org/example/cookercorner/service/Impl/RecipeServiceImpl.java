@@ -201,6 +201,33 @@ public class RecipeServiceImpl implements RecipeService {
 
     }
 
+    @Override
+    public ResponseEntity<List<RecipeListDto>> getRecipesByUserId(Long userId, Long currentUserId) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new UsernameNotFoundException("User not found"));
+        List<Recipe> recipes = recipeRepository.findRecipesByUserId(user.getId());
+        List<RecipeListDto> recipesDto = recipes.stream().map(recipe -> {
+            int likesCount = recipe.getLikes().size();
+            int savesCount = recipe.getSaves().size();
+            boolean isLikedByUser = isLiked(recipe.getId(), currentUserId);
+            boolean isSavedByUser = isSaved(recipe.getId(), currentUserId);
+
+            return new RecipeListDto(
+                    recipe.getRecipeName(),
+                    recipe.getCreatedBy().getUsername(),
+                    likesCount,
+                    savesCount,
+                    isLikedByUser,
+                    isSavedByUser
+            );
+        }).collect(Collectors.toList());
+        if (recipesDto.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(recipesDto);
+        }
+    }
+
 
 }
 

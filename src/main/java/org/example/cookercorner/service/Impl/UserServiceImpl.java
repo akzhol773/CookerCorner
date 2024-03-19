@@ -9,6 +9,7 @@ import org.example.cookercorner.entities.Role;
 import org.example.cookercorner.entities.User;
 import org.example.cookercorner.exceptions.*;
 import org.example.cookercorner.repository.ConfirmationTokenRepository;
+import org.example.cookercorner.repository.RecipeRepository;
 import org.example.cookercorner.repository.UserRepository;
 import org.example.cookercorner.service.ConfirmationTokenService;
 import org.example.cookercorner.service.EmailService;
@@ -30,6 +31,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -39,7 +41,8 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, RoleService roleService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtTokenUtils jwtTokenUtils, ConfirmationTokenService confirmationTokenService, EmailService emailService, ConfirmationTokenRepository confirmationTokenRepository) {
+    public UserServiceImpl(UserRepository userRepository, RoleService roleService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtTokenUtils jwtTokenUtils, ConfirmationTokenService confirmationTokenService, EmailService emailService, ConfirmationTokenRepository confirmationTokenRepository,
+                           RecipeRepository recipeRepository) {
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
@@ -48,6 +51,7 @@ public class UserServiceImpl implements UserService {
         this.confirmationTokenService = confirmationTokenService;
         this.emailService = emailService;
         this.confirmationTokenRepository = confirmationTokenRepository;
+        this.recipeRepository = recipeRepository;
     }
 
     private final UserRepository userRepository;
@@ -59,6 +63,7 @@ public class UserServiceImpl implements UserService {
     private final EmailService emailService;
     private final ConfirmationTokenRepository confirmationTokenRepository;
     private static final String CONFIRM_EMAIL_LINK = System.getenv("CONFIRM_EMAIL_LINK");
+    private final RecipeRepository recipeRepository;
 
 
     @Override
@@ -205,7 +210,33 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<UserProfileDto> getUserProfile(Long userId, Long currentUserId) {
-        return null;
+        User user = userRepository.findById(userId).orElseThrow(()-> new UsernameNotFoundException("User not found"));
+        List<Recipe> recipeListDto = recipeRepository.findRecipesByUserId(userId);
+        boolean isFollowed = isFollowed(userId, currentUserId);
+        UserProfileDto userProfileDto = new UserProfileDto(
+                user.getPhoto().getUrl(),
+                user.getName(),
+                recipeListDto.size(),
+                user.getFollowers().size(),
+                user.getFollowings().size(),
+                user.getBiography(),
+                isFollowed
+        );
+        return ResponseEntity.ok(userProfileDto);
+    }
+
+    @Override
+    public List<UserDto> searchUser(String query) {
+        List<User> users = userRepository.searchUsers(query);
+        List<UserDto> userDto = new ArrayList<>();
+
+        for(User user: users){
+            UserDto dto = new UserDto(
+                   user.getPhoto().getUrl(), user.getName()
+            );
+            userDto.add(dto);
+        }
+        return userDto;
     }
 
 

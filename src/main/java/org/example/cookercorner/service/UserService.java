@@ -5,6 +5,7 @@ import org.example.cookercorner.entities.ConfirmationToken;
 import org.example.cookercorner.entities.User;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
 
 
 public interface UserService {
@@ -23,4 +24,6 @@ public interface UserService {
     boolean isFollowed(Long userId, Long currentUserId);
 
     ResponseEntity<UserProfileDto> getUserProfile(Long userId, Long currentUserId);
+
+    List<UserDto> searchUser(String query);
 }

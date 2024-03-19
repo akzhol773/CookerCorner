@@ -29,4 +29,6 @@ public interface RecipeService {
     ResponseEntity<List<RecipeListDto>> getMyRecipe(Long userId);
 
     ResponseEntity<List<RecipeListDto>> getMyFlaggedRecipe(Long userId);
+
+    ResponseEntity<List<RecipeListDto>> getRecipesByUserId(Long userId, Long currentUserId);
 }

@@ -66,6 +66,16 @@ public class RecipeController {
         return recipeService.getMyFlaggedRecipe(userId);
     }
 
+    @GetMapping("/get-by-userId/{userId}")
+    public ResponseEntity<List<RecipeListDto>> getRecipesByUserId(Authentication authentication,  @PathVariable(name = "userId") Long userId) {
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
+        }
+        Long currentUserId = tokenUtils.getUserIdFromAuthentication(authentication);
+        return recipeService.getRecipesByUserId(userId, currentUserId);
+    }
+
 
     @GetMapping("/{recipeId}")
     public ResponseEntity<RecipeDto> getRecipeById(@PathVariable Long recipeId, Authentication authentication) {
