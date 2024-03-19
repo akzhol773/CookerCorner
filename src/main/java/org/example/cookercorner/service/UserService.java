@@ -21,4 +21,6 @@ public interface UserService {
     ResponseEntity<String> resendConfirmation(ReconfirmEmailDto dto);
 
     boolean isFollowed(Long userId, Long currentUserId);
+
+    ResponseEntity<UserProfileDto> getUserProfile(Long userId, Long currentUserId);
 }

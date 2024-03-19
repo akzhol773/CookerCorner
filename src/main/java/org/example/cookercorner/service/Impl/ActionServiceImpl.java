@@ -60,21 +60,27 @@ public class ActionServiceImpl implements ActionService {
 
     @Override
     public void unfollowUser(Long userId, Long currentUserId) {
-        User user = userRepository.findById(userId).orElseThrow(()-> new UsernameNotFoundException("User not found"));
-        User currentUser = userRepository.findById(currentUserId).orElseThrow(()-> new UsernameNotFoundException("User not found"));
-        if(user != currentUser) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        User currentUser = userRepository.findById(currentUserId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        if (!user.getId().equals(currentUser.getId()) && currentUser.getFollowings().contains(user)) {
             currentUser.getFollowings().remove(user);
+            user.getFollowers().remove(currentUser);
             userRepository.save(currentUser);
+            userRepository.save(user);
         }
     }
+
 
     @Override
     public void followUser(Long userId, Long currentUserId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         User currentUser = userRepository.findById(currentUserId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        if (user != currentUser) {
+        if (!user.getId().equals(currentUser.getId()) && !currentUser.getFollowings().contains(user)) {
             currentUser.getFollowings().add(user);
+            user.getFollowers().add(currentUser);
+            userRepository.save(user);
             userRepository.save(currentUser);
         }
     }
+
 }

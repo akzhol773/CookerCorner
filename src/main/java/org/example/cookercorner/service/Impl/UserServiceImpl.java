@@ -203,6 +203,10 @@ public class UserServiceImpl implements UserService {
         return user1 != null && user1.getFollowings().stream().anyMatch(user -> user.getId().equals(currentUserId));
     }
 
+    @Override
+    public ResponseEntity<UserProfileDto> getUserProfile(Long userId, Long currentUserId) {
+        return null;
+    }
 
 
     @Scheduled(cron = "0 0 12 * * MON")
