@@ -28,7 +28,6 @@ public class RecipeController {
         this.tokenUtils = tokenUtils;
     }
 
-
     @GetMapping("/get-by-category")
     public ResponseEntity<List<RecipeListDto>> getRecipes(@RequestParam(value = "category") String category,
                                         Authentication authentication) {
@@ -46,6 +45,27 @@ public class RecipeController {
         }
     }
 
+    @GetMapping("/my-recipes")
+    public ResponseEntity<List<RecipeListDto>> getMyRecipes(Authentication authentication) {
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
+        }
+        Long userId = tokenUtils.getUserIdFromAuthentication(authentication);
+
+        return recipeService.getMyRecipe(userId);
+    }
+
+    @GetMapping("/my-flagged-recipes")
+    public ResponseEntity<List<RecipeListDto>> getMyFlaggedRecipes(Authentication authentication) {
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
+        }
+        Long userId = tokenUtils.getUserIdFromAuthentication(authentication);
+        return recipeService.getMyFlaggedRecipe(userId);
+    }
+
 
     @GetMapping("/{recipeId}")
     public ResponseEntity<RecipeDto> getRecipeById(@PathVariable Long recipeId, Authentication authentication) {
@@ -55,7 +75,6 @@ public class RecipeController {
         Long userId = tokenUtils.getUserIdFromAuthentication(authentication);
         return ResponseEntity.ok(recipeService.getRecipeById(recipeId, userId));
     }
-
 
 
 

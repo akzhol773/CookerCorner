@@ -19,10 +19,14 @@ public interface RecipeService {
     RecipeDto getRecipeById(Long recipeId, Long userId);
 
 
-    ResponseEntity<List<RecipeListDto>> getRecipesByUserId(Long userId, Long currentUserId);
+
      boolean isLiked(Long recipeId, Long userId);
      boolean isSaved(Long recipeId, Long userId);
 
 
     List<RecipeListDto> searchRecipes(String query, Long userId);
+
+    ResponseEntity<List<RecipeListDto>> getMyRecipe(Long userId);
+
+    ResponseEntity<List<RecipeListDto>> getMyFlaggedRecipe(Long userId);
 }
