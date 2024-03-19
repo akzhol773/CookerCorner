@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.stream.Collectors;
 
 
 @Service
@@ -68,19 +68,21 @@ public class RecipeServiceImpl implements RecipeService {
                 new UsernameNotFoundException("User not found"));
         List<User> followings  = user.getFollowings();
         List<Recipe> recipes = recipeRepository.findRecipesFromFollowings(category, followings);
-        List<RecipeListDto> recipesDto= new ArrayList<>();
+        List<RecipeListDto> recipesDto = recipes.stream().map(recipe -> {
+            int likesCount = recipe.getLikes().size();
+            int savesCount = recipe.getSaves().size();
+            boolean isLikedByUser = isLiked(recipe.getId(), userId);
+            boolean isSavedByUser = isSaved(recipe.getId(), userId);
 
-        for(Recipe recipe: recipes){
-            RecipeListDto dto = new RecipeListDto(
+            return new RecipeListDto(
                     recipe.getRecipeName(),
                     recipe.getCreatedBy().getUsername(),
-                    (int) recipe.getLikes().stream().count(),
-                    (int) recipe.getSaves().stream().count(),
-                    isLiked(recipe.getId(), user.getId()),
-                    isSaved(recipe.getId(), user.getId())
-                    );
-            recipesDto.add(dto);
-        }
+                    likesCount,
+                    savesCount,
+                    isLikedByUser,
+                    isSavedByUser
+            );
+        }).collect(Collectors.toList());
         if (recipesDto.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {

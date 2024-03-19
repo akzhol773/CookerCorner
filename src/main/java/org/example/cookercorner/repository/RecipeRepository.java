@@ -14,8 +14,12 @@ import java.util.List;
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
 
-    @Query("SELECT DISTINCT r FROM Recipe r WHERE r.createdBy.id IN (SELECT u.id FROM User u WHERE u IN :followings) AND r.category = :category")
+//    @Query("SELECT DISTINCT r FROM Recipe r WHERE r.createdBy.id IN (SELECT u.id FROM User u WHERE u IN :followings) AND r.category = :category")
+//    List<Recipe> findRecipesFromFollowings(@Param("category") Category category, @Param("followings") List<User> followings);
+
+    @Query("SELECT DISTINCT r FROM Recipe r JOIN r.createdBy u WHERE u IN :followings AND r.category = :category ORDER BY SIZE(r.likes) DESC")
     List<Recipe> findRecipesFromFollowings(@Param("category") Category category, @Param("followings") List<User> followings);
+
 
 
 

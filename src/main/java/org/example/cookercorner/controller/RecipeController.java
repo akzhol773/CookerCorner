@@ -57,15 +57,6 @@ public class RecipeController {
     }
 
 
-    @GetMapping("/get-user-recipes/{userId}")
-    public ResponseEntity<List<RecipeListDto>> getRecipesByUser(@PathVariable Long userId, Authentication authentication){
-
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
-        }
-        Long currentUserId = tokenUtils.getUserIdFromAuthentication(authentication);
-        return recipeService.getRecipesByUserId(userId, currentUserId);
-    }
 
 
     @PostMapping("/addRecipe")
