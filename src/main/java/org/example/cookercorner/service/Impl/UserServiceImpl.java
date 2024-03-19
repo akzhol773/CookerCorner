@@ -4,6 +4,7 @@ package org.example.cookercorner.service.Impl;
 import jakarta.transaction.Transactional;
 import org.example.cookercorner.dtos.*;
 import org.example.cookercorner.entities.ConfirmationToken;
+import org.example.cookercorner.entities.Recipe;
 import org.example.cookercorner.entities.Role;
 import org.example.cookercorner.entities.User;
 import org.example.cookercorner.exceptions.*;
@@ -69,7 +70,7 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setEnabled(false);
         user.setEmail(registrationUserDto.email());
-        user.setUsername(registrationUserDto.username());
+        user.setName(registrationUserDto.name());
         Role userRole = roleService.getUserRole()
                 .orElseThrow(() -> new UserRoleNotFoundException("Role not found."));
         user.setRoles(Collections.singletonList(userRole));
@@ -196,6 +197,11 @@ public class UserServiceImpl implements UserService {
         return ResponseEntity.ok("Success! Please, check your email for the re-confirmation");
     }
 
+    @Override
+    public boolean isFollowed(Long userId, Long currentUserId) {
+        User user1 = userRepository.findById(userId).orElseThrow(()-> new UsernameNotFoundException("User not found"));
+        return user1 != null && user1.getFollowings().stream().anyMatch(user -> user.getId().equals(currentUserId));
+    }
 
 
     @Scheduled(cron = "0 0 12 * * MON")

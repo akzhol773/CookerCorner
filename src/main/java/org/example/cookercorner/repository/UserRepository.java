@@ -13,4 +13,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
     @Query("Select u From User u Where u.isEnabled = false")
     List<User> findNotEnabledUsers();
+
+
 }

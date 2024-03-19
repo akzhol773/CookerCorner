@@ -32,7 +32,7 @@ public class User implements UserDetails{
     @Column(nullable = false, unique = true)
     private String email;
 
-    private String username;
+    private String name;
 
     @Column(nullable = false)
     private String password;
@@ -87,6 +87,11 @@ public class User implements UserDetails{
             authorities.add(new SimpleGrantedAuthority(role.getName()));
         }
         return authorities;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
     }
 
 

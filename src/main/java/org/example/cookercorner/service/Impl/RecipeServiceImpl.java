@@ -1,5 +1,4 @@
 package org.example.cookercorner.service.Impl;
-
 import org.example.cookercorner.dtos.RecipeDto;
 import org.example.cookercorner.dtos.RecipeListDto;
 import org.example.cookercorner.dtos.RecipeRequestDto;
@@ -17,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,10 +57,11 @@ public class RecipeServiceImpl implements RecipeService {
 
            return recipeRepository.save(recipe);
 
+
     }
 
     @Override
-    public ResponseEntity<?> getByCategory(String category, Long userId) {
+    public ResponseEntity<?> getByCategory(Category category, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new UsernameNotFoundException("User not found"));
         List<User> followings  = user.getFollowings();
@@ -127,17 +126,19 @@ public class RecipeServiceImpl implements RecipeService {
         if (recipesDto.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
-            return ResponseEntity.ok(recipes);
+            return ResponseEntity.ok(recipesDto);
         }
 
     }
 
 
+    @Override
     public boolean isLiked(Long recipeId, Long userId){
         Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(()-> new RecipeNotFoundException("Recipe not found"));
         return recipe != null && recipe.getLikes().stream().anyMatch(user -> user.getId().equals(userId));
     }
 
+    @Override
     public  boolean isSaved(Long recipeId, Long userId){
         Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(()-> new RecipeNotFoundException("Recipe not found"));
         return recipe != null && recipe.getSaves().stream().anyMatch(user -> user.getId().equals(userId));

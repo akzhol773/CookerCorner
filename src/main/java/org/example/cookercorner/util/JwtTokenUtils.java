@@ -46,7 +46,7 @@ public class JwtTokenUtils {
                 .setClaims(claims)
                 .setSubject(user.getEmail())
                 .setIssuedAt(new Date(Instant.now().toEpochMilli()))
-                .setExpiration(new Date(Instant.now().plus(2, ChronoUnit.MINUTES).toEpochMilli()))
+                .setExpiration(new Date(Instant.now().plus(10, ChronoUnit.MINUTES).toEpochMilli()))
                 .signWith(getAccessKey())
                 .compact();
     }
@@ -75,7 +75,7 @@ public class JwtTokenUtils {
 
 
 
-    public String getUsername(String token) {
+    public String getEmail(String token) {
         return  Jwts.parser()
                 .verifyWith(getAccessKey())
                 .build()
@@ -114,7 +114,7 @@ public class JwtTokenUtils {
 
 
     public Boolean validateToken(String token, UserDetails user) {
-        final String username = getUsername(token);
+        final String username = getEmail(token);
         return (username.equals(user.getUsername()) && !isTokenExpired(token));
     }
 }

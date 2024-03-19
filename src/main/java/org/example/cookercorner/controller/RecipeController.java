@@ -2,6 +2,7 @@ package org.example.cookercorner.controller;
 
 
 import org.example.cookercorner.dtos.RecipeRequestDto;
+import org.example.cookercorner.enums.Category;
 import org.example.cookercorner.service.RecipeService;
 import org.example.cookercorner.util.JwtTokenUtils;
 import org.springframework.http.HttpStatus;
@@ -24,15 +25,26 @@ public class RecipeController {
 
 
     @GetMapping("/get-by-category")
-    public ResponseEntity<?> getRecipes(@RequestParam(value = "category") String category, Authentication authentication){
+    public ResponseEntity<?> getRecipes(@RequestParam(value = "category") String category,
+                                        Authentication authentication) {
 
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication required");
         }
 
         Long userId = tokenUtils.getUserIdFromAuthentication(authentication);
-        return recipeService.getByCategory(category, userId);
+
+        String upperCaseCategory = category.toUpperCase();
+
+        try {
+            Category categoryEnum = Category.valueOf(upperCaseCategory);
+            return recipeService.getByCategory(categoryEnum, userId);
+        } catch (IllegalArgumentException e) {
+            // Handle invalid category (e.g., return BAD_REQUEST with error message)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid category provided");
+        }
     }
+
 
 
 
@@ -61,17 +73,21 @@ public class RecipeController {
     @PostMapping("/addRecipe")
     public ResponseEntity<String> addRecipe(@RequestPart("recipeDto") RecipeRequestDto requestDto, @RequestPart ("photo") MultipartFile image, Authentication authentication){
 
+
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication required");
         }
 
         Long userId = tokenUtils.getUserIdFromAuthentication(authentication);
 
+
         recipeService.addRecipe(requestDto, image, userId);
 
         return ResponseEntity.ok("Recipe has been added successfully");
 
     }
+
+
 
 
 }

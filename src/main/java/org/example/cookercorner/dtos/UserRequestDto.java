@@ -12,7 +12,7 @@ public record UserRequestDto(
         @Pattern(regexp = "^[a-zA-Z0-9._-]+@[a-zA-Z0-9. -]+\\.[a-zA-Z]{2,4}$", message = "Email should be valid")
         String email,
 
-        String username,
+        String name,
 
         @NotNull (message = "Password field should not be null")
         @NotBlank(message = "Password is required")
