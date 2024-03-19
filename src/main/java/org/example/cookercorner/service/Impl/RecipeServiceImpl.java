@@ -1,4 +1,5 @@
 package org.example.cookercorner.service.Impl;
+import jakarta.transaction.Transactional;
 import org.example.cookercorner.dtos.RecipeDto;
 import org.example.cookercorner.dtos.RecipeListDto;
 import org.example.cookercorner.dtos.RecipeRequestDto;
@@ -22,6 +23,7 @@ import java.util.List;
 
 
 @Service
+@Transactional
 public class RecipeServiceImpl implements RecipeService {
 
     private final ImageService imageService;

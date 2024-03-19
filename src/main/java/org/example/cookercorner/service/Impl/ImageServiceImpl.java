@@ -1,5 +1,6 @@
 package org.example.cookercorner.service.Impl;
 
+import jakarta.transaction.Transactional;
 import org.example.cookercorner.entities.Image;
 import org.example.cookercorner.repository.ImageRepository;
 import org.example.cookercorner.service.CloudinaryService;
@@ -18,6 +19,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
+    @Transactional
     public Image saveImage(MultipartFile file) {
         Image image = new Image();
         try {

@@ -14,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("api/recipes")
 public class RecipeController {
-
    private final RecipeService recipeService;
    private final JwtTokenUtils tokenUtils;
 
@@ -22,7 +21,6 @@ public class RecipeController {
         this.recipeService = recipeService;
         this.tokenUtils = tokenUtils;
     }
-
 
     @GetMapping("/get-by-category")
     public ResponseEntity<?> getRecipes(@RequestParam(value = "category") String category,
@@ -46,8 +44,6 @@ public class RecipeController {
     }
 
 
-
-
     @GetMapping("/{recipeId}")
     public ResponseEntity<?> getRecipeById(@PathVariable Long recipeId, Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -66,7 +62,6 @@ public class RecipeController {
         Long currentUserId = tokenUtils.getUserIdFromAuthentication(authentication);
         return recipeService.getRecipesByUserId(userId, currentUserId);
     }
-
 
 
 

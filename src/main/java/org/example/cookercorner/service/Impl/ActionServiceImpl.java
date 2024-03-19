@@ -1,5 +1,6 @@
 package org.example.cookercorner.service.Impl;
 
+import jakarta.transaction.Transactional;
 import org.example.cookercorner.entities.Recipe;
 import org.example.cookercorner.entities.User;
 import org.example.cookercorner.exceptions.RecipeNotFoundException;
@@ -10,6 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
+@Transactional
 public class ActionServiceImpl implements ActionService {
     private final UserRepository userRepository;
     private final RecipeRepository recipeRepository;
