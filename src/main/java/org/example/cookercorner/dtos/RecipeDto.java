@@ -14,7 +14,7 @@ public record RecipeDto(
         String recipeName,
         String imageUrl,
         String author,
-        int cookingTime,
+        String cookingTime,
         String difficulty,
         int likeQuantity,
         boolean isLiked,

@@ -22,8 +22,8 @@ public record RecipeRequestDto(
                          String category,
                          @NotNull
                          String difficulty,
-                         @Positive
-                         int cookingTime,
+
+                         String cookingTime,
                          List<Ingredient> ingredients
                          ) implements Serializable {
 }

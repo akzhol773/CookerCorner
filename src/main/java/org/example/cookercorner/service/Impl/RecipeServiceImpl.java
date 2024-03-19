@@ -57,10 +57,7 @@ public class RecipeServiceImpl implements RecipeService {
             ingredients.add(ingredient1);
         }
         recipe.setIngredients(ingredients);
-
-           return recipeRepository.save(recipe);
-
-
+        return recipeRepository.save(recipe);
     }
 
     @Override
@@ -110,6 +107,8 @@ public class RecipeServiceImpl implements RecipeService {
                 ingredients
         );
     }
+
+
 
 
     @Override

@@ -33,7 +33,7 @@ public class Recipe {
     @Enumerated(EnumType.STRING)
     private Difficulty difficulty;
 
-    private int cookingTime;
+    private String cookingTime;
 
     @ManyToMany
     @JoinTable(
