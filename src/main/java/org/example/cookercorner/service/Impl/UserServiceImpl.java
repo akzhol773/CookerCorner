@@ -238,6 +238,21 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    @Override
+    public ResponseEntity<MyProfileDto> getOwnProfile(Long currentUserId) {
+        User user = userRepository.findById(currentUserId).orElseThrow(()-> new UsernameNotFoundException("User not found"));
+        List<Recipe> recipeListDto = recipeRepository.findRecipesByUserId(currentUserId);
+        MyProfileDto userProfileDto = new MyProfileDto(
+                user.getPhoto().getUrl(),
+                user.getName(),
+                recipeListDto.size(),
+                user.getFollowers().size(),
+                user.getFollowings().size(),
+                user.getBiography()
+        );
+        return ResponseEntity.ok(userProfileDto);
+    }
+
 
     @Scheduled(cron = "0 0 12 * * MON")
     private void sendWeeklyConfirmEmail() {

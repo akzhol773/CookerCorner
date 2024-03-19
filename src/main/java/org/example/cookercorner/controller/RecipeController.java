@@ -39,7 +39,6 @@ public class RecipeController {
                     @ApiResponse(responseCode = "403", description = "Authentication required")
             }
     )
-
     @GetMapping("/get_by_category")
     public ResponseEntity<List<RecipeListDto>> getRecipes(@RequestParam(value = "category") String category,
                                         Authentication authentication) {
@@ -174,6 +173,4 @@ public class RecipeController {
         Long userId = tokenUtils.getUserIdFromAuthentication(authentication);
         return ResponseEntity.ok(recipeService.searchRecipes(query, userId));
     }
-
-
 }
