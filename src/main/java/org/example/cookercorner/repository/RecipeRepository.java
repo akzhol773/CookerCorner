@@ -15,8 +15,13 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
 
 
-    @Query("SELECT DISTINCT r FROM Recipe r JOIN r.createdBy u WHERE u IN :followings AND r.category = :category ORDER BY SIZE(r.likes) DESC")
-    List<Recipe> findRecipesFromFollowings(@Param("category") Category category, @Param("followings") List<User> followings);
+//    @Query("SELECT DISTINCT r FROM Recipe r JOIN r.createdBy u WHERE u IN :followings AND r.category = :category ORDER BY SIZE(r.likes) DESC")
+//    List<Recipe> findRecipesFromFollowings(@Param("category") Category category, @Param("followings") List<User> followings);
+
+    @Query("select r from Recipe r where r.category = :category ORDER BY SIZE(r.likes) DESC")
+    List<Recipe> findPopularRecipes(@Param("category") Category category);
+
+
 
     @Query("SELECT r FROM Recipe r WHERE r.createdBy.id = :userId")
     List<Recipe> findRecipesByUserId(@Param("userId") Long userId);

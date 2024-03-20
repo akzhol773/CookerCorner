@@ -65,8 +65,10 @@ public class RecipeServiceImpl implements RecipeService {
     public ResponseEntity<List<RecipeListDto>> getByCategory(Category category, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new UsernameNotFoundException("User not found"));
-        List<User> followings  = user.getFollowings();
-        List<Recipe> recipes = recipeRepository.findRecipesFromFollowings(category, followings);
+//        List<User> followings  = user.getFollowings();
+//        List<Recipe> recipes = recipeRepository.findRecipesFromFollowings(category, followings);
+
+        List<Recipe> recipes = recipeRepository.findPopularRecipes(category);
         List<RecipeListDto> recipesDto = recipes.stream().map(recipe -> {
             int likesCount = recipe.getLikes().size();
             int savesCount = recipe.getSaves().size();
