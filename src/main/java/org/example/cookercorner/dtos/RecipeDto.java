@@ -20,7 +20,7 @@ public record RecipeDto(
         boolean isLiked,
         boolean isSaved,
         String description,
-        List<Ingredient> ingredients
+        List<IngredientDto> ingredients
 
 
 ) implements Serializable {

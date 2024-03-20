@@ -41,7 +41,7 @@ public class User implements UserDetails{
 
     private String biography;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "image_id")
     private Image photo;
 

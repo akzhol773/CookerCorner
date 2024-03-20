@@ -1,5 +1,6 @@
 package org.example.cookercorner.service.Impl;
 import jakarta.transaction.Transactional;
+import org.example.cookercorner.dtos.IngredientDto;
 import org.example.cookercorner.dtos.RecipeDto;
 import org.example.cookercorner.dtos.RecipeListDto;
 import org.example.cookercorner.dtos.RecipeRequestDto;
@@ -74,11 +75,12 @@ public class RecipeServiceImpl implements RecipeService {
 
             return new RecipeListDto(
                     recipe.getRecipeName(),
-                    recipe.getCreatedBy().getUsername(),
+                    recipe.getCreatedBy().getName(),
                     likesCount,
                     savesCount,
-                    isLikedByUser,
-                    isSavedByUser
+                    isSavedByUser,
+                    isLikedByUser
+
             );
         }).collect(Collectors.toList());
         if (recipesDto.isEmpty()) {
@@ -92,15 +94,22 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public RecipeDto getRecipeById(Long recipeId, Long userId) {
-        Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(()-> new RecipeNotFoundException("Recipe not found"));
-        List<Ingredient> ingredients = recipe.getIngredients();
+        Recipe recipe = recipeRepository.findById(recipeId)
+                .orElseThrow(() -> new RecipeNotFoundException("Recipe not found"));
+        String imageUrl = (recipe.getImage() != null) ? recipe.getImage().getUrl() : null;
+        String createdBy = (recipe.getCreatedBy() != null) ? recipe.getCreatedBy().getName() : "Unknown";
+
+        List<IngredientDto> ingredients = recipe.getIngredients().stream()
+                .map(ingredient -> new IngredientDto(ingredient.getName(), ingredient.getAmount()))
+                .collect(Collectors.toList());
+
         return new RecipeDto(
                 recipe.getRecipeName(),
-                recipe.getImage().getUrl(),
-                recipe.getCreatedBy().getUsername(),
+                imageUrl,
+                createdBy,
                 recipe.getCookingTime(),
-                recipe.getDifficulty().name(),
-                (int) recipe.getLikes().stream().count(),
+                (recipe.getDifficulty() != null) ? recipe.getDifficulty().name() : "Unknown",
+                recipe.getLikes().size(),
                 isLiked(recipeId, userId),
                 isSaved(recipeId, userId),
                 recipe.getDescription(),
@@ -135,7 +144,7 @@ public class RecipeServiceImpl implements RecipeService {
             boolean isSaved = isSaved(recipe.getId(), currentUserId);
             RecipeListDto dto = new RecipeListDto(
                     recipe.getRecipeName(),
-                    recipe.getCreatedBy().getUsername(),
+                    recipe.getCreatedBy().getName(),
                     likesCount,
                     savesCount,
                     isLiked,
@@ -161,7 +170,7 @@ public class RecipeServiceImpl implements RecipeService {
 
             return new RecipeListDto(
                     recipe.getRecipeName(),
-                    recipe.getCreatedBy().getUsername(),
+                    recipe.getCreatedBy().getName(),
                     likesCount,
                     savesCount,
                     isLikedByUser,
@@ -185,7 +194,7 @@ public class RecipeServiceImpl implements RecipeService {
 
             return new RecipeListDto(
                     recipe.getRecipeName(),
-                    recipe.getCreatedBy().getUsername(),
+                    recipe.getCreatedBy().getName(),
                     likesCount,
                     savesCount,
                     isLikedByUser,
@@ -213,7 +222,7 @@ public class RecipeServiceImpl implements RecipeService {
 
             return new RecipeListDto(
                     recipe.getRecipeName(),
-                    recipe.getCreatedBy().getUsername(),
+                    recipe.getCreatedBy().getName(),
                     likesCount,
                     savesCount,
                     isLikedByUser,
