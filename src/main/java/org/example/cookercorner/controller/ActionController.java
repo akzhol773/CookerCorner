@@ -90,15 +90,14 @@ public class ActionController {
         }
         Long currentUserId = tokenUtils.getUserIdFromAuthentication(authentication);
         boolean isFollowed = userService.isFollowed(userId, currentUserId);
-
+        System.out.println(isFollowed);
         if (isFollowed) {
             actionService.unfollowUser(userId, currentUserId);
             return ResponseEntity.ok("Unfollowed successfully");
-        } else if(!isFollowed){
+        } else {
             actionService.followUser(userId, currentUserId);
             return ResponseEntity.ok("Followed successfully");
         }
-        return ResponseEntity.ok().body("User cannot follow or unfollow himself or herself");
     }
 
 }

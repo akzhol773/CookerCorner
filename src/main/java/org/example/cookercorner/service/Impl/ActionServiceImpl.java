@@ -23,8 +23,8 @@ public class ActionServiceImpl implements ActionService {
 
     @Override
     public void putLikeIntoRecipe(Long recipeId, Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(()-> new UsernameNotFoundException("User not found"));
-        Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(()-> new RecipeNotFoundException("Recipe not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(() -> new RecipeNotFoundException("Recipe not found"));
         recipe.getLikes().add(user);
         recipeRepository.save(recipe);
 
@@ -32,8 +32,8 @@ public class ActionServiceImpl implements ActionService {
 
     @Override
     public void removeLikeFromRecipe(Long recipeId, Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(()-> new UsernameNotFoundException("User not found"));
-        Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(()-> new RecipeNotFoundException("Recipe not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(() -> new RecipeNotFoundException("Recipe not found"));
         recipe.getLikes().remove(user);
         recipeRepository.save(recipe);
 
@@ -41,8 +41,8 @@ public class ActionServiceImpl implements ActionService {
 
     @Override
     public void removeMarkFromRecipe(Long recipeId, Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(()-> new UsernameNotFoundException("User not found"));
-        Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(()-> new RecipeNotFoundException("Recipe not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(() -> new RecipeNotFoundException("Recipe not found"));
         recipe.getSaves().remove(user);
         recipeRepository.save(recipe);
 
@@ -50,8 +50,8 @@ public class ActionServiceImpl implements ActionService {
 
     @Override
     public void putMarkIntoRecipe(Long recipeId, Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(()-> new UsernameNotFoundException("User not found"));
-        Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(()-> new RecipeNotFoundException("Recipe not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(() -> new RecipeNotFoundException("Recipe not found"));
 
         recipe.getSaves().add(user);
         recipeRepository.save(recipe);
@@ -62,11 +62,11 @@ public class ActionServiceImpl implements ActionService {
     public void unfollowUser(Long userId, Long currentUserId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         User currentUser = userRepository.findById(currentUserId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        if (!user.getId().equals(currentUser.getId()) && currentUser.getFollowings().contains(user)) {
+        if (!user.getId().equals(currentUser.getId())) {
             currentUser.getFollowings().remove(user);
-            user.getFollowers().remove(currentUser);
             userRepository.save(currentUser);
-            userRepository.save(user);
+        } else {
+            throw new IllegalArgumentException("Cannot unfollow yourself.");
         }
     }
 
@@ -75,12 +75,11 @@ public class ActionServiceImpl implements ActionService {
     public void followUser(Long userId, Long currentUserId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         User currentUser = userRepository.findById(currentUserId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        if (!user.getId().equals(currentUser.getId()) && !currentUser.getFollowings().contains(user)) {
+        if (!user.getId().equals(currentUser.getId())) {
             currentUser.getFollowings().add(user);
-            user.getFollowers().add(currentUser);
-            userRepository.save(user);
             userRepository.save(currentUser);
+        } else {
+            throw new IllegalArgumentException("Cannot follow yourself.");
         }
     }
-
 }

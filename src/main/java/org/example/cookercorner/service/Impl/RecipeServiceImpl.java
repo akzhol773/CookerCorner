@@ -112,22 +112,15 @@ public class RecipeServiceImpl implements RecipeService {
 
 
     @Override
-    public boolean isLiked(Long recipeId, Long userId) {
-        return getRecipeById(recipeId)
-                .map(recipe -> recipe.getLikes().contains(userId))
-                .orElse(false);
+    public boolean isLiked(Long recipeId, Long userId){
+        Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(()-> new RecipeNotFoundException("Recipe not found"));
+        return recipe != null && recipe.getLikes().stream().anyMatch(user -> user.getId().equals(userId));
     }
 
     @Override
-    public boolean isSaved(Long recipeId, Long userId) {
-        return getRecipeById(recipeId)
-                .map(recipe -> recipe.getSaves().contains(userId))
-                .orElse(false);
-    }
-
-    private Optional<Recipe> getRecipeById(Long recipeId) {
-        return  recipeRepository.findById(recipeId);
-
+    public  boolean isSaved(Long recipeId, Long userId){
+        Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(()-> new RecipeNotFoundException("Recipe not found"));
+        return recipe != null && recipe.getSaves().stream().anyMatch(user -> user.getId().equals(userId));
     }
 
 

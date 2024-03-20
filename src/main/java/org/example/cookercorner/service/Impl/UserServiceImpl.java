@@ -26,10 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -187,9 +184,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean isFollowed(Long userId, Long currentUserId) {
-        User user1 = userRepository.findById(userId).orElseThrow(()-> new UsernameNotFoundException("User not found"));
-        return user1 != null && user1.getFollowings().stream().anyMatch(user -> user.getId().equals(currentUserId));
+        Optional<User> userOptional = userRepository.findById(userId);
+        Optional<User> currentUserOptional = userRepository.findById(currentUserId);
+
+        if (userOptional.isPresent() && currentUserOptional.isPresent()) {
+            User user = userOptional.get();
+            User currentUser = currentUserOptional.get();
+            return currentUser.getFollowings().contains(user);
+        } else {
+            throw new UsernameNotFoundException("User not found");
+        }
     }
+
 
     @Override
     public ResponseEntity<UserProfileDto> getUserProfile(Long userId, Long currentUserId) {
