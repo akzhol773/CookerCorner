@@ -75,7 +75,9 @@ public class RecipeServiceImpl implements RecipeService {
             boolean isLikedByUser = isLiked(recipe.getId(), userId);
             boolean isSavedByUser = isSaved(recipe.getId(), userId);
 
+            String imageUrl = (recipe.getImage() != null) ? recipe.getImage().getUrl() : null;
             return new RecipeListDto(
+                    imageUrl,
                     recipe.getRecipeName(),
                     recipe.getCreatedBy().getName(),
                     likesCount,
@@ -144,7 +146,9 @@ public class RecipeServiceImpl implements RecipeService {
             int savesCount = recipe.getSaves().size();
             boolean isLiked = isLiked(recipe.getId(), currentUserId);
             boolean isSaved = isSaved(recipe.getId(), currentUserId);
+            String imageUrl = (recipe.getImage() != null) ? recipe.getImage().getUrl() : null;
             RecipeListDto dto = new RecipeListDto(
+                    imageUrl,
                     recipe.getRecipeName(),
                     recipe.getCreatedBy().getName(),
                     likesCount,
@@ -170,7 +174,9 @@ public class RecipeServiceImpl implements RecipeService {
             boolean isLikedByUser = isLiked(recipe.getId(), userId);
             boolean isSavedByUser = isSaved(recipe.getId(), userId);
 
+            String imageUrl = (recipe.getImage() != null) ? recipe.getImage().getUrl() : null;
             return new RecipeListDto(
+                    imageUrl,
                     recipe.getRecipeName(),
                     recipe.getCreatedBy().getName(),
                     likesCount,
@@ -193,8 +199,10 @@ public class RecipeServiceImpl implements RecipeService {
             int savesCount = recipe.getSaves().size();
             boolean isLikedByUser = isLiked(recipe.getId(), userId);
             boolean isSavedByUser = isSaved(recipe.getId(), userId);
+            String imageUrl = (recipe.getImage() != null) ? recipe.getImage().getUrl() : null;
 
             return new RecipeListDto(
+                    imageUrl,
                     recipe.getRecipeName(),
                     recipe.getCreatedBy().getName(),
                     likesCount,
@@ -222,7 +230,9 @@ public class RecipeServiceImpl implements RecipeService {
             boolean isLikedByUser = isLiked(recipe.getId(), currentUserId);
             boolean isSavedByUser = isSaved(recipe.getId(), currentUserId);
 
+            String imageUrl = (recipe.getImage() != null) ? recipe.getImage().getUrl() : null;
             return new RecipeListDto(
+                    imageUrl,
                     recipe.getRecipeName(),
                     recipe.getCreatedBy().getName(),
                     likesCount,
