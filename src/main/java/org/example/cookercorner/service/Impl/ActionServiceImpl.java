@@ -10,6 +10,8 @@ import org.example.cookercorner.service.ActionService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @Transactional
 public class ActionServiceImpl implements ActionService {
@@ -60,26 +62,54 @@ public class ActionServiceImpl implements ActionService {
 
     @Override
     public void unfollowUser(Long userId, Long currentUserId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        User currentUser = userRepository.findById(currentUserId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        if (!user.getId().equals(currentUser.getId())) {
-            currentUser.getFollowings().remove(user);
+        User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User to unfollow not found"));
+        User currentUser = userRepository.findById(currentUserId).orElseThrow(() -> new UsernameNotFoundException("Current user not found"));
+
+        List<User> followings = currentUser.getFollowings();
+        List<User> followers = user.getFollowers();
+
+        if (followings.remove(user)) {
+            currentUser.setFollowings(followings);
             userRepository.save(currentUser);
         } else {
-            throw new IllegalArgumentException("Cannot unfollow yourself.");
+            throw new IllegalStateException("User was not being followed.");
+        }
+
+        if (followers.remove(currentUser)) {
+            user.setFollowers(followers);
+            userRepository.save(user);
+        } else {
+            throw new IllegalStateException("Current user was not a follower of the user to unfollow.");
         }
     }
+
+
+
 
 
     @Override
     public void followUser(Long userId, Long currentUserId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        User currentUser = userRepository.findById(currentUserId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        if (!user.getId().equals(currentUser.getId())) {
-            currentUser.getFollowings().add(user);
+        User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User to follow not found"));
+        User currentUser = userRepository.findById(currentUserId).orElseThrow(() -> new UsernameNotFoundException("Current user not found"));
+
+        List<User> followings = currentUser.getFollowings();
+        List<User> followers = user.getFollowers();
+
+        if (!followings.contains(user)) {
+            followings.add(user);
+            currentUser.setFollowings(followings);
             userRepository.save(currentUser);
         } else {
-            throw new IllegalArgumentException("Cannot follow yourself.");
+            throw new IllegalStateException("User is already being followed.");
+        }
+
+        if (!followers.contains(currentUser)) {
+            followers.add(currentUser);
+            user.setFollowers(followers);
+            userRepository.save(user);
+        } else {
+            throw new IllegalStateException("Current user is already a follower of the user to follow.");
         }
     }
+
 }

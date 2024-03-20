@@ -182,18 +182,13 @@ public class UserServiceImpl implements UserService {
         return ResponseEntity.ok("Success! Please, check your email for the re-confirmation");
     }
 
-    @Override
     public boolean isFollowed(Long userId, Long currentUserId) {
-        Optional<User> userOptional = userRepository.findById(userId);
-        Optional<User> currentUserOptional = userRepository.findById(currentUserId);
-
-        if (userOptional.isPresent() && currentUserOptional.isPresent()) {
-            User user = userOptional.get();
-            User currentUser = currentUserOptional.get();
-            return currentUser.getFollowings().contains(user);
-        } else {
-            throw new UsernameNotFoundException("User not found");
-        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        User currentUser = userRepository.findById(currentUserId)
+                .orElseThrow(() -> new UsernameNotFoundException("Current user not found"));
+        List<User> followings = currentUser.getFollowings();
+        return followings.contains(user);
     }
 
 
