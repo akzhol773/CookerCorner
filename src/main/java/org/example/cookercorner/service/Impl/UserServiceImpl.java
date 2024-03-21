@@ -143,7 +143,10 @@ public class UserServiceImpl implements UserService {
 
         }
         confirmationToken.setConfirmedAt(LocalDateTime.now());
-        confirmationToken.getUser().setEnabled(true);
+        User user = confirmationToken.getUser();
+        user.setEnabled(true);
+        userRepository.saveAndFlush(user);
+        confirmationTokenRepository.saveAndFlush(confirmationToken);
 
         return ResponseEntity.ok().body("Email successfully confirmed. Go back to your login page");
     }
