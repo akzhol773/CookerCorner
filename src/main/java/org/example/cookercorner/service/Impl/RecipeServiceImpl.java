@@ -77,6 +77,7 @@ public class RecipeServiceImpl implements RecipeService {
 
             String imageUrl = (recipe.getImage() != null) ? recipe.getImage().getUrl() : null;
             return new RecipeListDto(
+                    recipe.getId(),
                     imageUrl,
                     recipe.getRecipeName(),
                     recipe.getCreatedBy().getName(),
@@ -104,10 +105,11 @@ public class RecipeServiceImpl implements RecipeService {
         String createdBy = (recipe.getCreatedBy() != null) ? recipe.getCreatedBy().getName() : "Unknown";
 
         List<IngredientDto> ingredients = recipe.getIngredients().stream()
-                .map(ingredient -> new IngredientDto(ingredient.getName(), ingredient.getAmount()))
+                .map(ingredient -> new IngredientDto(ingredient.getId(), ingredient.getName(), ingredient.getAmount()))
                 .collect(Collectors.toList());
 
         return new RecipeDto(
+                recipe.getId(),
                 recipe.getRecipeName(),
                 imageUrl,
                 createdBy,
@@ -148,6 +150,7 @@ public class RecipeServiceImpl implements RecipeService {
             boolean isSaved = isSaved(recipe.getId(), currentUserId);
             String imageUrl = (recipe.getImage() != null) ? recipe.getImage().getUrl() : null;
             RecipeListDto dto = new RecipeListDto(
+                    recipe.getId(),
                     imageUrl,
                     recipe.getRecipeName(),
                     recipe.getCreatedBy().getName(),
@@ -176,6 +179,7 @@ public class RecipeServiceImpl implements RecipeService {
 
             String imageUrl = (recipe.getImage() != null) ? recipe.getImage().getUrl() : null;
             return new RecipeListDto(
+                    recipe.getId(),
                     imageUrl,
                     recipe.getRecipeName(),
                     recipe.getCreatedBy().getName(),
@@ -202,6 +206,7 @@ public class RecipeServiceImpl implements RecipeService {
             String imageUrl = (recipe.getImage() != null) ? recipe.getImage().getUrl() : null;
 
             return new RecipeListDto(
+                    recipe.getId(),
                     imageUrl,
                     recipe.getRecipeName(),
                     recipe.getCreatedBy().getName(),
@@ -232,6 +237,7 @@ public class RecipeServiceImpl implements RecipeService {
 
             String imageUrl = (recipe.getImage() != null) ? recipe.getImage().getUrl() : null;
             return new RecipeListDto(
+                    recipe.getId(),
                     imageUrl,
                     recipe.getRecipeName(),
                     recipe.getCreatedBy().getName(),

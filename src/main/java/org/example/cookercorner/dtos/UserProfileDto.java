@@ -10,6 +10,6 @@ import java.util.List;
  * DTO for {@link org.example.cookercorner.entities.User}
  */
 @Builder
-public record UserProfileDto(@Nullable String imageUrl, String name, int recipeQuantity, int followerQuantity, int followingQuantity, @Nullable String biography, boolean isFollowed) implements Serializable {
+public record UserProfileDto(Long id, String imageUrl, String name, int recipeQuantity, int followerQuantity, int followingQuantity, String biography, boolean isFollowed) implements Serializable {
 
 }

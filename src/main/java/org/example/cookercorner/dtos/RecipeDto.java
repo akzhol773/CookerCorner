@@ -11,6 +11,7 @@ import java.util.List;
  */
 @Builder
 public record RecipeDto(
+        Long id,
         String recipeName,
         String imageUrl,
         String author,

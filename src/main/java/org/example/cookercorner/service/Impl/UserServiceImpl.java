@@ -204,6 +204,7 @@ public class UserServiceImpl implements UserService {
         String photoUrl = (user.getPhoto() != null) ? user.getPhoto().getUrl() : "https://t4.ftcdn.net/jpg/03/32/59/65/240_F_332596535_lAdLhf6KzbW6PWXBWeIFTovTii1drkbT.jpg";
 
         UserProfileDto userProfileDto = new UserProfileDto(
+                user.getId(),
                 photoUrl,
                 user.getName(),
                 recipeListDto.size(),
@@ -224,7 +225,9 @@ public class UserServiceImpl implements UserService {
         for(User user: users){
             String photoUrl = (user.getPhoto() != null) ? user.getPhoto().getUrl() : "https://t4.ftcdn.net/jpg/03/32/59/65/240_F_332596535_lAdLhf6KzbW6PWXBWeIFTovTii1drkbT.jpg";
             UserDto dto = new UserDto(
-                     user.getName(), photoUrl
+                    user.getId(),
+                    user.getName(),
+                    photoUrl
             );
             userDto.add(dto);
         }
