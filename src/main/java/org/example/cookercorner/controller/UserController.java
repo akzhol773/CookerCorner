@@ -98,12 +98,9 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
         }
         Long currentUserId = tokenUtils.getUserIdFromAuthentication(authentication);
-        try {
+
             userService.changeProfile(dto, photo, currentUserId);
             return ResponseEntity.ok("Profile updated successfully");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Failed to update profile: " + e.getMessage());
-        }
+
     }
 }
