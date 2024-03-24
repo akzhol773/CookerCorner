@@ -92,15 +92,18 @@ public class UserController {
                     @ApiResponse(responseCode = "403", description = "Authentication required")
             }
     )
-    @PutMapping("/update_profile")
+    @PutMapping(value = "/update_profile", consumes = "application/json")
     public ResponseEntity<String> changeProfile(@RequestPart("dto") UserUpdateProfileDto dto, @RequestPart("image" ) MultipartFile photo, Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
         }
         Long currentUserId = tokenUtils.getUserIdFromAuthentication(authentication);
-
+        try {
             userService.changeProfile(dto, photo, currentUserId);
             return ResponseEntity.ok("Profile updated successfully");
-
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to update profile: " + e.getMessage());
+        }
     }
 }

@@ -14,13 +14,13 @@ import java.util.List;
  * DTO for {@link org.example.cookercorner.entities.Recipe}
  */
 public record RecipeRequestDto(
-                        @NotNull @NotEmpty
+
                         String recipeName,
-                         @NotEmpty
+
                          String description,
-                         @NotNull
+
                          String category,
-                         @NotNull
+
                          String difficulty,
 
                          String cookingTime,
