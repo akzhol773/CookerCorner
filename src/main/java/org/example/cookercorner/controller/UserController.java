@@ -92,7 +92,7 @@ public class UserController {
                     @ApiResponse(responseCode = "403", description = "Authentication required")
             }
     )
-    @PutMapping(value = "/update_profile", consumes = "application/json")
+    @PutMapping(value = "/update_profile", consumes = {"application/json", "multipart/form-data"})
     public ResponseEntity<String> changeProfile(@RequestPart("dto") UserUpdateProfileDto dto, @RequestPart("image" ) MultipartFile photo, Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
