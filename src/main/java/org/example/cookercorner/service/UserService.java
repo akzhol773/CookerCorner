@@ -32,4 +32,6 @@ public interface UserService {
     void changeProfile(UserUpdateProfileDto dto, MultipartFile photo, Long id);
 
     ResponseEntity<MyProfileDto> getOwnProfile(Long currentUserId);
+
+    String updateUser(UserUpdateProfileDto request, Long currentUserId, MultipartFile image);
 }

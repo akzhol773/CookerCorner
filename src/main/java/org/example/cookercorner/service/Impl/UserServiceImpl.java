@@ -277,6 +277,22 @@ public class UserServiceImpl implements UserService {
         return ResponseEntity.ok(userProfileDto);
     }
 
+    @Override
+    public String updateUser(UserUpdateProfileDto request, Long currentUserId, MultipartFile image) {
+        User user = userRepository.findById(currentUserId).orElseThrow(()-> new UsernameNotFoundException("User not found"));
+        user.setName(request.name());
+        user.setBiography(request.biography());
+
+        if(image!=null){
+            user.setPhoto(imageService.saveImage(image));
+        }
+        userRepository.save(user);
+        return "User profile successfully updated";
+    }
+
+
+
+
 
     @Scheduled(cron = "0 0 12 * * MON")
     private void sendWeeklyConfirmEmail() {
