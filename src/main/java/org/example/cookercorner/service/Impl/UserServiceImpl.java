@@ -198,7 +198,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<UserProfileDto> getUserProfile(Long userId, Long currentUserId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        List<Recipe> recipeListDto = recipeRepository.findRecipesByUserId(userId);
+        List<Recipe> recipeListDto = recipeRepository.findRecipesPageByUserId(userId);
         boolean isFollowed = isFollowed(userId, currentUserId);
 
         String photoUrl = (user.getPhoto() != null) ? user.getPhoto().getUrl() : "https://t4.ftcdn.net/jpg/03/32/59/65/240_F_332596535_lAdLhf6KzbW6PWXBWeIFTovTii1drkbT.jpg";
@@ -264,7 +264,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<MyProfileDto> getOwnProfile(Long currentUserId) {
         User user = userRepository.findById(currentUserId).orElseThrow(()-> new UsernameNotFoundException("User not found"));
-        List<Recipe> recipeListDto = recipeRepository.findRecipesByUserId(currentUserId);
+        List<Recipe> recipeListDto = recipeRepository.findRecipesPageByUserId(currentUserId);
         String photoUrl = (user.getPhoto() != null) ? user.getPhoto().getUrl() : "https://t4.ftcdn.net/jpg/03/32/59/65/240_F_332596535_lAdLhf6KzbW6PWXBWeIFTovTii1drkbT.jpg";
         MyProfileDto userProfileDto = new MyProfileDto(
                 photoUrl,

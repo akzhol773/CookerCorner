@@ -15,6 +15,8 @@ import org.example.cookercorner.service.ImageService;
 import org.example.cookercorner.service.RecipeService;
 import org.example.cookercorner.util.JsonValidator;
 import org.example.cookercorner.util.JwtTokenUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -56,7 +58,9 @@ public class RecipeController {
     )
     @GetMapping("/get_by_category")
     public ResponseEntity<List<RecipeListDto>> getRecipes(@RequestParam(value = "category") String category,
-                                        Authentication authentication) {
+                                                          @RequestParam(value = "page", defaultValue = "0") int page,
+                                                          @RequestParam(value = "size", defaultValue = "10") int size,
+                                                          Authentication authentication) {
 
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
@@ -65,12 +69,11 @@ public class RecipeController {
         String upperCaseCategory = category.toUpperCase();
         try {
             Category categoryEnum = Category.valueOf(upperCaseCategory);
-            return recipeService.getByCategory(categoryEnum, userId);
+            return recipeService.getByCategory(categoryEnum, userId, page, size);
         } catch (IllegalArgumentException exception) {
             throw new IllegalArgumentException(exception.getMessage());
         }
     }
-
     @Operation(
             summary = "Get recipes of the current user",
             description = "Using this endpoint it is possible to get recipes of the current user",
@@ -81,14 +84,16 @@ public class RecipeController {
             }
     )
     @GetMapping("/my_recipes")
-    public ResponseEntity<List<RecipeListDto>> getMyRecipes(Authentication authentication) {
+    public ResponseEntity<List<RecipeListDto>> getMyRecipes(@RequestParam(value = "page", defaultValue = "0") int page,
+                                                            @RequestParam(value = "size", defaultValue = "10") int size,
+                                                            Authentication authentication) {
 
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
         }
         Long userId = tokenUtils.getUserIdFromAuthentication(authentication);
 
-        return recipeService.getMyRecipe(userId);
+        return recipeService.getMyRecipe(userId, page, size);
     }
 
 
@@ -103,13 +108,15 @@ public class RecipeController {
     )
 
     @GetMapping("/my_flagged_recipes")
-    public ResponseEntity<List<RecipeListDto>> getMyFlaggedRecipes(Authentication authentication) {
+    public ResponseEntity<List<RecipeListDto>> getMyFlaggedRecipes(Authentication authentication,
+                                                                   @RequestParam(value = "page", defaultValue = "0") int page,
+                                                                   @RequestParam(value = "size", defaultValue = "10") int size) {
 
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
         }
         Long userId = tokenUtils.getUserIdFromAuthentication(authentication);
-        return recipeService.getMyFlaggedRecipe(userId);
+        return recipeService.getMyFlaggedRecipe(userId,  page, size);
     }
 
     @Operation(
@@ -123,13 +130,16 @@ public class RecipeController {
     )
 
     @GetMapping("/get_recipes_by_userId/{userId}")
-    public ResponseEntity<List<RecipeListDto>> getRecipesByUserId(Authentication authentication,  @PathVariable(name = "userId") Long userId) {
+    public ResponseEntity<List<RecipeListDto>> getRecipesByUserId(Authentication authentication,
+                                                                  @PathVariable(name = "userId") Long userId,
+                                                                  @RequestParam(value = "page", defaultValue = "0") int page,
+                                                                  @RequestParam(value = "size", defaultValue = "10") int size) {
 
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
         }
         Long currentUserId = tokenUtils.getUserIdFromAuthentication(authentication);
-        return recipeService.getRecipesByUserId(userId, currentUserId);
+        return recipeService.getRecipesByUserId(userId, currentUserId, page, size);
     }
 
     @Operation(
