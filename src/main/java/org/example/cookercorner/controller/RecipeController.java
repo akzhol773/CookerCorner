@@ -11,6 +11,7 @@ import org.example.cookercorner.dtos.RecipeListDto;
 import org.example.cookercorner.dtos.RecipeRequestDto;
 import org.example.cookercorner.dtos.UserUpdateProfileDto;
 import org.example.cookercorner.enums.Category;
+import org.example.cookercorner.service.ImageService;
 import org.example.cookercorner.service.RecipeService;
 import org.example.cookercorner.util.JsonValidator;
 import org.example.cookercorner.util.JwtTokenUtils;
@@ -34,12 +35,14 @@ public class RecipeController {
    private final RecipeService recipeService;
    private final JwtTokenUtils tokenUtils;
     private final ObjectMapper objectMapper;
+    private final ImageService imageService;
     private final JsonValidator jsonValidator;
 
-    public RecipeController(RecipeService recipeService, JwtTokenUtils tokenUtils, ObjectMapper objectMapper, JsonValidator jsonValidator) {
+    public RecipeController(RecipeService recipeService, JwtTokenUtils tokenUtils, ObjectMapper objectMapper, ImageService imageService, JsonValidator jsonValidator) {
         this.recipeService = recipeService;
         this.tokenUtils = tokenUtils;
         this.objectMapper = objectMapper;
+        this.imageService = imageService;
         this.jsonValidator = jsonValidator;
     }
     @Operation(
@@ -168,7 +171,7 @@ public class RecipeController {
             Long userId = tokenUtils.getUserIdFromAuthentication(authentication);
             RecipeRequestDto requestDto = objectMapper.readValue(recipeDto, RecipeRequestDto.class);
             jsonValidator.validateRecipeRequest(requestDto);
-            if (image == null || image.isEmpty() || !isImageFile(image)) {
+            if (image == null || image.isEmpty() || !imageService.isImageFile(image)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid image file");
             }
             recipeService.addRecipe(requestDto, image, userId);
@@ -182,10 +185,6 @@ public class RecipeController {
         }
     }
 
-    private boolean isImageFile(MultipartFile file) {
-        String contentType = file.getContentType();
-        return contentType != null && contentType.startsWith("image/");
-    }
 
 
 
@@ -204,6 +203,6 @@ public class RecipeController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
         }
         Long userId = tokenUtils.getUserIdFromAuthentication(authentication);
-        return ResponseEntity.ok(recipeService.searchRecipes(query, userId));
+        return recipeService.searchRecipes(query, userId);
     }
 }

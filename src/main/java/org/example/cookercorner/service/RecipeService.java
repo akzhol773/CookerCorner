@@ -24,7 +24,7 @@ public interface RecipeService {
      boolean isSaved(Long recipeId, Long userId);
 
 
-    List<RecipeListDto> searchRecipes(String query, Long userId);
+    ResponseEntity<List<RecipeListDto>> searchRecipes(String query, Long userId);
 
     ResponseEntity<List<RecipeListDto>> getMyRecipe(Long userId);
 
