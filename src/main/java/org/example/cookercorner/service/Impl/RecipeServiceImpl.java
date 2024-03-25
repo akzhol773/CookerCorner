@@ -1,9 +1,6 @@
 package org.example.cookercorner.service.Impl;
 import jakarta.transaction.Transactional;
-import org.example.cookercorner.dtos.IngredientDto;
-import org.example.cookercorner.dtos.RecipeDto;
-import org.example.cookercorner.dtos.RecipeListDto;
-import org.example.cookercorner.dtos.RecipeRequestDto;
+import org.example.cookercorner.dtos.*;
 import org.example.cookercorner.entities.Ingredient;
 import org.example.cookercorner.entities.Recipe;
 import org.example.cookercorner.entities.User;
@@ -50,11 +47,11 @@ public class RecipeServiceImpl implements RecipeService {
         User user = userRepository.findById(userId).orElseThrow(()-> new UsernameNotFoundException("User not found"));
         recipe.setCreatedBy(user);
         List<Ingredient> ingredients = new ArrayList<>();
-        for(Ingredient ingredient: requestDto.ingredients()){
+        for(IngredientRequestDto ingredient: requestDto.ingredients()){
             Ingredient ingredient1 = new Ingredient();
             ingredient1.setRecipe(recipe);
-            ingredient1.setName(ingredient.getName());
-            ingredient1.setAmount(ingredient.getAmount());
+            ingredient1.setName(ingredient.name());
+            ingredient1.setAmount(ingredient.weight());
             ingredients.add(ingredient1);
         }
         recipe.setIngredients(ingredients);

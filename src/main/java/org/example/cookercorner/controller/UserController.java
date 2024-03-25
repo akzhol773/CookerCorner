@@ -6,8 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import org.example.cookercorner.dtos.*;
 import org.example.cookercorner.service.UserService;
+import org.example.cookercorner.util.JsonValidator;
 import org.example.cookercorner.util.JwtTokenUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -30,13 +32,13 @@ public class UserController {
     private final JwtTokenUtils tokenUtils;
     private final UserService userService;
     private final ObjectMapper objectMapper;
-    private final Validator validator;
+    private final JsonValidator jsonValidator;
 
-    public UserController(JwtTokenUtils tokenUtils, UserService userService, ObjectMapper objectMapper, Validator validator) {
+    public UserController(JwtTokenUtils tokenUtils, UserService userService, ObjectMapper objectMapper, JsonValidator jsonValidator) {
         this.tokenUtils = tokenUtils;
         this.userService = userService;
         this.objectMapper = objectMapper;
-        this.validator = validator;
+        this.jsonValidator = jsonValidator;
     }
 
     @Operation(
@@ -49,7 +51,7 @@ public class UserController {
             }
     )
     @GetMapping("/get_user_profile/{userId}")
-    public ResponseEntity<UserProfileDto> getRecipesByUser(@PathVariable Long userId, Authentication authentication){
+    public ResponseEntity<UserProfileDto> getRecipesByUser(@PathVariable Long userId, Authentication authentication) {
 
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
@@ -81,7 +83,7 @@ public class UserController {
             }
     )
     @GetMapping("/my_profile")
-    public ResponseEntity<MyProfileDto> getRecipesByUser(Authentication authentication){
+    public ResponseEntity<MyProfileDto> getRecipesByUser(Authentication authentication) {
 
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
@@ -89,7 +91,6 @@ public class UserController {
         Long currentUserId = tokenUtils.getUserIdFromAuthentication(authentication);
         return userService.getOwnProfile(currentUserId);
     }
-
 
 
     @Operation(
@@ -100,36 +101,34 @@ public class UserController {
                     @ApiResponse(responseCode = "403", description = "Authentication required")
             }
     )
-    @PutMapping(value = "/update_profile")
-    public ResponseEntity<String> changeProfile(@RequestPart("dto") String dto,
+    @PutMapping("/update_profile")
+    public ResponseEntity<String> changeProfile(@RequestPart("dto") String profileDto,
                                                 @RequestPart(value = "image", required = false) MultipartFile image,
                                                 Authentication authentication) {
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
-        }
-
-        UserUpdateProfileDto request;
-        Long currentUserId = tokenUtils.getUserIdFromAuthentication(authentication);
         try {
-            request = objectMapper.readValue(dto, UserUpdateProfileDto.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-        validateRequest(request);
-        if (image != null) {
-            if (!Objects.requireNonNull(image.getContentType()).startsWith("image/")) {
-                throw new IllegalArgumentException("Uploaded file is not an image");
+            if (authentication == null || !authentication.isAuthenticated()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication required");
             }
+            UserUpdateProfileDto request = objectMapper.readValue(profileDto, UserUpdateProfileDto.class);
+            jsonValidator.validateUserRequest(request);
+
+            if (image != null && !isImageFile(image)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The file is not an image");
+            }
+            Long currentUserId = tokenUtils.getUserIdFromAuthentication(authentication);
+            String responseMessage = userService.updateUser(request, currentUserId, image);
+            return ResponseEntity.ok(responseMessage);
+        } catch (JsonProcessingException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid profile DTO JSON: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update profile: " + e.getMessage());
         }
-        return ResponseEntity.ok(userService.updateUser(request, currentUserId, image));
     }
 
-    private void validateRequest(UserUpdateProfileDto request) {
-        BindingResult bindingResult = new BeanPropertyBindingResult(request, "userUpdateProfileDto");
-        validator.validate(request, bindingResult);
-
-        if (bindingResult.hasErrors()) {
-            throw new IllegalArgumentException("Invalid input " + bindingResult.getAllErrors());
-        }
+    private boolean isImageFile(MultipartFile file) {
+        String contentType = file.getContentType();
+        return contentType != null && contentType.startsWith("image/");
     }
 }
