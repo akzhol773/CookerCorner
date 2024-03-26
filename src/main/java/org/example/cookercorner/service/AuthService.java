@@ -13,4 +13,5 @@ public interface AuthService {
     ResponseEntity<JwtRefreshTokenDto> refreshToken(String refreshToken);
     ResponseEntity<String> confirmEmail(String token);
     ResponseEntity<String> resendConfirmation(ReconfirmEmailDto dto);
+    void sendWeeklyConfirmEmail();
 }

@@ -165,7 +165,6 @@ public class AuthServiceImpl implements AuthService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
     @Override
     public ResponseEntity<String> confirmEmail(String token) {
         ConfirmationToken confirmationToken = confirmationTokenService.getToken(token).orElseThrow(()->new TokenNotFoundException("Token not found"));
@@ -207,9 +206,9 @@ public class AuthServiceImpl implements AuthService {
         emailService.sendConfirmationMail(link, user);
         return ResponseEntity.ok("Success! Please, check your email for the re-confirmation");
     }
-
     @Scheduled(cron = "0 0 12 * * MON")
-    private void sendWeeklyConfirmEmail() {
+    @Override
+    public void sendWeeklyConfirmEmail() {
         List<User> users = userRepository.findNotEnabledUsers();
         for(User user: users){
             ConfirmationToken confirmationToken = generateConfirmToken(user);
@@ -218,5 +217,4 @@ public class AuthServiceImpl implements AuthService {
             emailService.sendConfirmationMail(link, user);
         }
     }
-
 }
