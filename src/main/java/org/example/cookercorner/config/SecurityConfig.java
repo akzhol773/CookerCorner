@@ -12,9 +12,11 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
@@ -26,13 +28,14 @@ public class SecurityConfig {
 
     private final CustomUserDetails customUserDetails;
     private final JwtAuthFilter jwtAuthFilter;
+    private final LogoutHandler logoutHandler;
 
 
     @Autowired
-    public SecurityConfig(CustomUserDetails customUserDetails, JwtAuthFilter jwtAuthFilter) {
+    public SecurityConfig(CustomUserDetails customUserDetails, JwtAuthFilter jwtAuthFilter, LogoutHandler logoutHandler) {
         this.customUserDetails = customUserDetails;
         this.jwtAuthFilter = jwtAuthFilter;
-
+        this.logoutHandler = logoutHandler;
     }
 
 
@@ -63,19 +66,15 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated()
-
-
                 )
                .userDetailsService(customUserDetails)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-
+               .logout(logout -> logout
+                       .logoutUrl("/api/auth/logout")
+                       .addLogoutHandler(logoutHandler)
+                       .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
+               )
                .build();
     }
-
-
-
-
-
-
 }

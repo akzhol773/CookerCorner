@@ -4,7 +4,9 @@ package org.example.cookercorner.service.Impl;
 import jakarta.transaction.Transactional;
 import org.example.cookercorner.dtos.*;
 import org.example.cookercorner.entities.*;
+import org.example.cookercorner.enums.TokenType;
 import org.example.cookercorner.exceptions.*;
+import org.example.cookercorner.repository.AccessTokenRepository;
 import org.example.cookercorner.repository.ConfirmationTokenRepository;
 import org.example.cookercorner.repository.RecipeRepository;
 import org.example.cookercorner.repository.UserRepository;
@@ -31,11 +33,25 @@ import java.util.*;
 @Service
 public class UserServiceImpl implements UserService {
 
+    private final UserRepository userRepository;
+    private final ImageService imageService;
+    private final AccessTokenRepository accessTokenRepository;
+    private final RoleService roleService;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenUtils jwtTokenUtils;
+    private final ConfirmationTokenService confirmationTokenService;
+    private final EmailService emailService;
+    private final ConfirmationTokenRepository confirmationTokenRepository;
+    private static final String CONFIRM_EMAIL_LINK = System.getenv("CONFIRM_EMAIL_LINK");
+    private final RecipeRepository recipeRepository;
+
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, ImageService imageService, RoleService roleService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtTokenUtils jwtTokenUtils, ConfirmationTokenService confirmationTokenService, EmailService emailService, ConfirmationTokenRepository confirmationTokenRepository,
+    public UserServiceImpl(UserRepository userRepository, ImageService imageService, AccessTokenRepository accessTokenRepository, RoleService roleService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtTokenUtils jwtTokenUtils, ConfirmationTokenService confirmationTokenService, EmailService emailService, ConfirmationTokenRepository confirmationTokenRepository,
                            RecipeRepository recipeRepository) {
         this.userRepository = userRepository;
         this.imageService = imageService;
+        this.accessTokenRepository = accessTokenRepository;
         this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
@@ -46,17 +62,7 @@ public class UserServiceImpl implements UserService {
         this.recipeRepository = recipeRepository;
     }
 
-    private final UserRepository userRepository;
-    private final ImageService imageService;
-    private final RoleService roleService;
-    private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
-    private final JwtTokenUtils jwtTokenUtils;
-    private final ConfirmationTokenService confirmationTokenService;
-    private final EmailService emailService;
-    private final ConfirmationTokenRepository confirmationTokenRepository;
-    private static final String CONFIRM_EMAIL_LINK = System.getenv("CONFIRM_EMAIL_LINK");
-    private final RecipeRepository recipeRepository;
+
     @Override
     @Transactional
     public ResponseEntity<UserResponseDto> createNewUser(UserRequestDto registrationUserDto) {
@@ -95,6 +101,15 @@ public class UserServiceImpl implements UserService {
             User user = (User) authentication.getPrincipal();
             String accessToken = jwtTokenUtils.generateAccessToken(user);
             String refreshToken = jwtTokenUtils.generateRefreshToken(user);
+            AccessToken token = AccessToken.builder()
+                    .user(user)
+                    .token(accessToken)
+                    .tokenType(TokenType.BEARER)
+                    .revoked(false)
+                    .expired(false)
+                    .build();
+            revokeAllUserTokens(user);
+            accessTokenRepository.save(token);
             return ResponseEntity.ok(new JwtResponseDto(accessToken, refreshToken));
         } catch (AuthenticationException exception) {
             if (exception instanceof BadCredentialsException) {
@@ -233,34 +248,6 @@ public class UserServiceImpl implements UserService {
         }
         return userDto;
     }
-
-    @Override
-    @Transactional
-    public void changeProfile(UserUpdateProfileDto dto, MultipartFile photo, Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-        user.setName(dto.name());
-        user.setBiography(dto.biography());
-
-        if (photo != null && !photo.isEmpty()) {
-            try {
-                String imageUrl = imageService.saveImage(photo).getUrl();
-                Image newImage = new Image();
-                newImage.setUrl(imageUrl);
-                if (user.getPhoto() != null) {
-                    imageService.deleteUserImage(user.getPhoto().getId());
-                }
-
-                user.setPhoto(newImage);
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to process image", e);
-            }
-        }
-
-        userRepository.save(user);
-    }
-
     @Override
     public ResponseEntity<MyProfileDto> getOwnProfile(Long currentUserId) {
         User user = userRepository.findById(currentUserId).orElseThrow(()-> new UsernameNotFoundException("User not found"));
@@ -278,6 +265,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void revokeAllUserTokens(User user) {
+        List<AccessToken> validUserTokens = accessTokenRepository.findAllValidTokensByUser(user.getId());
+        if(validUserTokens.isEmpty()){
+            return;
+        }
+        validUserTokens.forEach(t ->{
+            t.setExpired(true);
+            t.setRevoked(true);
+        });
+        accessTokenRepository.saveAll(validUserTokens);
+    }
+
+    @Override
+    @Transactional
     public String updateUser(UserUpdateProfileDto request, Long currentUserId, MultipartFile image) {
         User user = userRepository.findById(currentUserId).orElseThrow(()-> new UsernameNotFoundException("User not found"));
         user.setName(request.name());

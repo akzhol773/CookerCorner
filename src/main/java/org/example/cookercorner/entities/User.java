@@ -45,6 +45,8 @@ public class User implements UserDetails{
     @JoinColumn(name = "image_id")
     private Image photo;
 
+    @OneToMany(mappedBy = "user")
+    private List<AccessToken> tokens;
 
     @ManyToMany
     @JoinTable(

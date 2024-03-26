@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.example.cookercorner.repository.AccessTokenRepository;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +22,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtTokenUtils jwtTokenUtils;
     private final CustomUserDetails customUserDetails;
+    private final AccessTokenRepository tokenRepository;
     @Override
     protected void doFilterInternal(@NonNull  HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
 
@@ -35,7 +37,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String email = jwtTokenUtils.getEmail(token);
         if(email != null && SecurityContextHolder.getContext().getAuthentication() == null){
             UserDetails userDetails = customUserDetails.loadUserByUsername(email);
-            if(jwtTokenUtils.validateToken(token, userDetails)){
+            boolean isTokenValid = tokenRepository.findByToken(token)
+                    .map(t -> !t.isExpired() && !t.isRevoked())
+                    .orElse(false);
+            if(jwtTokenUtils.validateToken(token, userDetails) && isTokenValid){
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities()
                 );
