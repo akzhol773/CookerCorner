@@ -59,7 +59,7 @@ public class RecipeController {
     @GetMapping("/get_by_category")
     public ResponseEntity<List<RecipeListDto>> getRecipes(@RequestParam(value = "category") String category,
                                                           @RequestParam(value = "page", defaultValue = "0") int page,
-                                                          @RequestParam(value = "size", defaultValue = "10") int size,
+                                                          @RequestParam(value = "size", defaultValue = "12") int size,
                                                           Authentication authentication) {
 
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -85,7 +85,7 @@ public class RecipeController {
     )
     @GetMapping("/my_recipes")
     public ResponseEntity<List<RecipeListDto>> getMyRecipes(@RequestParam(value = "page", defaultValue = "0") int page,
-                                                            @RequestParam(value = "size", defaultValue = "10") int size,
+                                                            @RequestParam(value = "size", defaultValue = "12") int size,
                                                             Authentication authentication) {
 
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -110,7 +110,7 @@ public class RecipeController {
     @GetMapping("/my_flagged_recipes")
     public ResponseEntity<List<RecipeListDto>> getMyFlaggedRecipes(Authentication authentication,
                                                                    @RequestParam(value = "page", defaultValue = "0") int page,
-                                                                   @RequestParam(value = "size", defaultValue = "10") int size) {
+                                                                   @RequestParam(value = "size", defaultValue = "12") int size) {
 
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
@@ -133,7 +133,7 @@ public class RecipeController {
     public ResponseEntity<List<RecipeListDto>> getRecipesByUserId(Authentication authentication,
                                                                   @PathVariable(name = "userId") Long userId,
                                                                   @RequestParam(value = "page", defaultValue = "0") int page,
-                                                                  @RequestParam(value = "size", defaultValue = "10") int size) {
+                                                                  @RequestParam(value = "size", defaultValue = "12") int size) {
 
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
