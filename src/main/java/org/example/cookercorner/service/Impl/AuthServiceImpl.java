@@ -102,6 +102,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<JwtResponseDto> authenticate(JwtRequestDto authRequest) {
 
         try {
@@ -179,8 +180,8 @@ public class AuthServiceImpl implements AuthService {
         confirmationToken.setConfirmedAt(LocalDateTime.now());
         User user = confirmationToken.getUser();
         user.setEnabled(true);
-        userRepository.saveAndFlush(user);
-        confirmationTokenRepository.saveAndFlush(confirmationToken);
+        userRepository.save(user);
+        confirmationTokenRepository.save(confirmationToken);
 
         return ResponseEntity.ok().body("Email successfully confirmed. Go back to your login page");
     }

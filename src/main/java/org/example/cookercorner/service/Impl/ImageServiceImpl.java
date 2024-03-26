@@ -17,33 +17,25 @@ public class ImageServiceImpl implements ImageService {
         this.imageRepository = imageRepository;
         this.cloudinaryService = cloudinaryService;
     }
-
     @Override
     @Transactional
     public Image saveImage(MultipartFile file) {
         Image image = new Image();
         try {
-
             image.setUrl(cloudinaryService.uploadFile(file, "Recipes picture"));
             imageRepository.save(image);
         }catch (Exception exception){
             throw new RuntimeException("Image upload failed: " + exception.getMessage());
         }
-
         return image;
-
     }
-
     @Override
     public boolean isImageFile(MultipartFile file) {
         String contentType = file.getContentType();
         return contentType != null && contentType.startsWith("image/");
     }
-
     @Override
     public void deleteUserImage(Long photoId) {
         imageRepository.deleteById(photoId);
     }
-
-
 }

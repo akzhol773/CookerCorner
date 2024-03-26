@@ -15,13 +15,10 @@ import java.util.stream.Collectors;
 
 @Component
 public class RecipeMapper {
-
     private final RecipeRepository recipeRepository;
-
     public RecipeMapper(RecipeRepository recipeRepository) {
         this.recipeRepository = recipeRepository;
     }
-
     public RecipeListDto toRecipeListDto(Recipe recipe, boolean isLikedByUser, boolean isSavedByUser) {
         return new RecipeListDto(
                 recipe.getId(),
@@ -34,7 +31,6 @@ public class RecipeMapper {
                 isLikedByUser
         );
     }
-
     public List<RecipeListDto> toRecipeListDtoList(List<Recipe> recipes, Long userId) {
         return recipes.stream()
                 .map(recipe -> toRecipeListDto(recipe,
@@ -42,7 +38,6 @@ public class RecipeMapper {
                         isSaved(recipe.getId(), userId)))
                 .collect(Collectors.toList());
     }
-
     public RecipeDto toRecipeDto(Recipe recipe, Long userId) {
         return new RecipeDto(
                 recipe.getId(),
@@ -58,7 +53,6 @@ public class RecipeMapper {
                 mapIngredients(recipe.getIngredients())
         );
     }
-
     private String getImageUrl(Recipe recipe) {
         return (recipe.getImage() != null) ? recipe.getImage().getUrl() : null;
     }
@@ -66,7 +60,6 @@ public class RecipeMapper {
     private String getCreatorName(Recipe recipe) {
         return (recipe.getCreatedBy() != null) ? recipe.getCreatedBy().getName() : "Unknown";
     }
-
     private int getLikesCount(Recipe recipe) {
         return recipe.getLikes().size();
     }

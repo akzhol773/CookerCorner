@@ -9,13 +9,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class RolesInitializer implements ApplicationRunner {
-
     private final RoleRepository rolesRepository;
-
     public RolesInitializer(RoleRepository rolesRepository) {
         this.rolesRepository = rolesRepository;
     }
-
     @Override
     public void run(ApplicationArguments args) throws Exception {
 

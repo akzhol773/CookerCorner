@@ -32,7 +32,6 @@ import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
-
     private final UserRepository userRepository;
     private final ImageService imageService;
     private final RecipeRepository recipeRepository;
@@ -44,8 +43,6 @@ public class UserServiceImpl implements UserService {
         this.imageService = imageService;
         this.recipeRepository = recipeRepository;
     }
-
-
 
     @Override
     public ResponseEntity<UserProfileDto> getUserProfile(Long userId, Long currentUserId) {
@@ -67,8 +64,6 @@ public class UserServiceImpl implements UserService {
         );
         return ResponseEntity.ok(userProfileDto);
     }
-
-
     @Override
     public List<UserDto> searchUser(String query) {
         List<User> users = userRepository.searchUsers(query);
@@ -100,7 +95,6 @@ public class UserServiceImpl implements UserService {
         );
         return ResponseEntity.ok(userProfileDto);
     }
-
     @Override
     @Transactional
     public String updateUser(UserUpdateProfileDto request, Long currentUserId, MultipartFile image) {
@@ -114,7 +108,6 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
         return "User profile successfully updated";
     }
-
     public boolean isFollowed(Long userId, Long currentUserId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
@@ -123,5 +116,4 @@ public class UserServiceImpl implements UserService {
         List<User> followings = currentUser.getFollowings();
         return followings.contains(user);
     }
-
 }

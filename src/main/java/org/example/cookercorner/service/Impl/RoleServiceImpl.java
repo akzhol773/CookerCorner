@@ -13,11 +13,9 @@ import java.util.Optional;
 
 public class RoleServiceImpl implements RoleService {
    private final RoleRepository roleRepository;
-
     public RoleServiceImpl(RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
     }
-
     @Override
    public Optional<Role> getUserRole() {
       return roleRepository.findByName("ROLE_USER");
