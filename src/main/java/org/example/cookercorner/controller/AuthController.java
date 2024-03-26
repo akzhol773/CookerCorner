@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.cookercorner.dtos.*;
+import org.example.cookercorner.service.AuthService;
 import org.example.cookercorner.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,11 +22,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("api/auth/")
 public class AuthController {
-
     private final UserService userService;
+    private final AuthService authService;
     @Autowired
-    public AuthController(UserService userService) {
+    public AuthController(UserService userService, AuthService authService) {
         this.userService = userService;
+        this.authService = authService;
     }
 
 
@@ -41,7 +43,7 @@ public class AuthController {
     })
     @PostMapping("/login")
     public ResponseEntity<JwtResponseDto> login(@RequestBody JwtRequestDto authRequest){
-       return  userService.authenticate(authRequest);
+       return  authService.authenticate(authRequest);
 
     }
 
@@ -59,7 +61,7 @@ public class AuthController {
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<UserResponseDto> register(@Valid @RequestBody UserRequestDto registrationUserDto){
-        return  userService.createNewUser(registrationUserDto);}
+        return  authService.createNewUser(registrationUserDto);}
 
 
     @Operation(
@@ -76,7 +78,7 @@ public class AuthController {
     @Hidden
     @PostMapping("/refresh_token")
     public ResponseEntity<JwtRefreshTokenDto> refreshToken(@RequestParam("refreshToken") String refreshToken){
-         return  userService.refreshToken(refreshToken);
+         return  authService.refreshToken(refreshToken);
 
     }
 
@@ -94,7 +96,7 @@ public class AuthController {
     @Hidden
     @GetMapping("/confirm_email")
     public ResponseEntity<String> confirm(@RequestParam("token") String token){
-        return userService.confirmEmail(token);
+        return authService.confirmEmail(token);
     }
 
 
@@ -111,7 +113,7 @@ public class AuthController {
     @Hidden
     @PostMapping("/re_confirm_email")
     public ResponseEntity<String> reconfirm(@RequestBody ReconfirmEmailDto dto) {
-        return  userService.resendConfirmation(dto);
+        return  authService.resendConfirmation(dto);
     }
 
 }

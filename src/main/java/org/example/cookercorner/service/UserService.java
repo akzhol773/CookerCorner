@@ -11,17 +11,6 @@ import java.util.List;
 
 
 public interface UserService {
-    ResponseEntity<UserResponseDto> createNewUser(UserRequestDto registrationUserDto);
-
-    ResponseEntity<JwtResponseDto> authenticate(JwtRequestDto authRequest);
-
-    ResponseEntity<JwtRefreshTokenDto> refreshToken(String refreshToken);
-
-    ResponseEntity<String> confirmEmail(String token);
-
-    ConfirmationToken generateConfirmToken(User user);
-
-    ResponseEntity<String> resendConfirmation(ReconfirmEmailDto dto);
 
     boolean isFollowed(Long userId, Long currentUserId);
 
@@ -30,7 +19,6 @@ public interface UserService {
     List<UserDto> searchUser(String query);
 
     ResponseEntity<MyProfileDto> getOwnProfile(Long currentUserId);
-    void revokeAllUserTokens(User user);
 
     String updateUser(UserUpdateProfileDto request, Long currentUserId, MultipartFile image);
 }
