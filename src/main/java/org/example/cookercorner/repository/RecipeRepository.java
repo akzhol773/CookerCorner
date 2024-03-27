@@ -20,11 +20,8 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 //    List<Recipe> findRecipesFromFollowings(@Param("category") Category category, @Param("followings") List<User> followings);
 
     @Query("select r from Recipe r where r.category = :category ORDER BY SIZE(r.likes) DESC")
-    Page<Recipe> findPopularRecipes(@Param("category") Category category, Pageable pageable);
+    List<Recipe> findPopularRecipes(@Param("category") Category category);
 
-
-    @Query("SELECT r FROM Recipe r WHERE r.createdBy.id = :userId")
-    Page<Recipe> findRecipesPageByUserId(@Param("userId") Long userId, Pageable pageable);
 
     @Query("SELECT r FROM Recipe r WHERE r.createdBy.id = :userId")
     List<Recipe> findRecipesPageByUserId(@Param("userId") Long userId);
@@ -34,7 +31,7 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
 
     @Query("SELECT r FROM Recipe r JOIN r.saves s WHERE s.id = :userId")
-    Page<Recipe> findFlaggedRecipes(@Param("userId") Long userId, Pageable pageable);
+    List<Recipe> findFlaggedRecipes(@Param("userId") Long userId);
 
 
 }

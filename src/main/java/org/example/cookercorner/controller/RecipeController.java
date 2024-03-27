@@ -58,8 +58,6 @@ public class RecipeController {
     )
     @GetMapping("/get_by_category")
     public ResponseEntity<List<RecipeListDto>> getRecipes(@RequestParam(value = "category") String category,
-                                                          @RequestParam(value = "page", defaultValue = "0") int page,
-                                                          @RequestParam(value = "size", defaultValue = "12") int size,
                                                           Authentication authentication) {
 
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -69,7 +67,7 @@ public class RecipeController {
         String upperCaseCategory = category.toUpperCase();
         try {
             Category categoryEnum = Category.valueOf(upperCaseCategory);
-            return recipeService.getByCategory(categoryEnum, userId, page, size);
+            return recipeService.getByCategory(categoryEnum, userId);
         } catch (IllegalArgumentException exception) {
             throw new IllegalArgumentException(exception.getMessage());
         }
@@ -84,16 +82,12 @@ public class RecipeController {
             }
     )
     @GetMapping("/my_recipes")
-    public ResponseEntity<List<RecipeListDto>> getMyRecipes(@RequestParam(value = "page", defaultValue = "0") int page,
-                                                            @RequestParam(value = "size", defaultValue = "12") int size,
-                                                            Authentication authentication) {
-
+    public ResponseEntity<List<RecipeListDto>> getMyRecipes(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
         }
         Long userId = tokenUtils.getUserIdFromAuthentication(authentication);
-
-        return recipeService.getMyRecipe(userId, page, size);
+        return recipeService.getMyRecipe(userId);
     }
 
 
@@ -108,15 +102,13 @@ public class RecipeController {
     )
 
     @GetMapping("/my_flagged_recipes")
-    public ResponseEntity<List<RecipeListDto>> getMyFlaggedRecipes(Authentication authentication,
-                                                                   @RequestParam(value = "page", defaultValue = "0") int page,
-                                                                   @RequestParam(value = "size", defaultValue = "12") int size) {
+    public ResponseEntity<List<RecipeListDto>> getMyFlaggedRecipes(Authentication authentication) {
 
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
         }
         Long userId = tokenUtils.getUserIdFromAuthentication(authentication);
-        return recipeService.getMyFlaggedRecipe(userId,  page, size);
+        return recipeService.getMyFlaggedRecipe(userId);
     }
 
     @Operation(
@@ -131,15 +123,13 @@ public class RecipeController {
 
     @GetMapping("/get_recipes_by_userId/{userId}")
     public ResponseEntity<List<RecipeListDto>> getRecipesByUserId(Authentication authentication,
-                                                                  @PathVariable(name = "userId") Long userId,
-                                                                  @RequestParam(value = "page", defaultValue = "0") int page,
-                                                                  @RequestParam(value = "size", defaultValue = "12") int size) {
+                                                                  @PathVariable(name = "userId") Long userId) {
 
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
         }
         Long currentUserId = tokenUtils.getUserIdFromAuthentication(authentication);
-        return recipeService.getRecipesByUserId(userId, currentUserId, page, size);
+        return recipeService.getRecipesByUserId(userId, currentUserId);
     }
 
     @Operation(

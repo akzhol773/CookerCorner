@@ -12,6 +12,8 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.cookercorner.dtos.*;
+import org.example.cookercorner.entities.User;
+import org.example.cookercorner.repository.UserRepository;
 import org.example.cookercorner.service.AuthService;
 import org.example.cookercorner.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +21,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("api/auth/")
 public class AuthController {
-    private final UserService userService;
+    private final UserRepository userRepository;
     private final AuthService authService;
     @Autowired
-    public AuthController(UserService userService, AuthService authService) {
-        this.userService = userService;
+    public AuthController(UserRepository userRepository, AuthService authService) {
+        this.userRepository = userRepository;
         this.authService = authService;
     }
 

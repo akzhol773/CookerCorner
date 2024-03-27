@@ -20,5 +20,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> searchUsers(@Param("query") String query);
 
 
-
 }
