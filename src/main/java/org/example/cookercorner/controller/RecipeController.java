@@ -171,7 +171,7 @@ public class RecipeController {
             Long userId = tokenUtils.getUserIdFromAuthentication(authentication);
             RecipeRequestDto requestDto = objectMapper.readValue(recipeDto, RecipeRequestDto.class);
             jsonValidator.validateRecipeRequest(requestDto);
-            if (image == null || image.isEmpty() || !imageService.isImageFile(image)) {
+            if (image == null || image.isEmpty() || !isImageFile(image)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid image file");
             }
             recipeService.addRecipe(requestDto, image, userId);
@@ -184,8 +184,10 @@ public class RecipeController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add recipe: " + e.getMessage());
         }
     }
-
-
+    public boolean isImageFile(MultipartFile file) {
+        String contentType = file.getContentType();
+        return contentType != null && contentType.startsWith("image/");
+    }
 
 
     @Operation(
